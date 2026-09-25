@@ -159,7 +159,11 @@ struct WelcomeScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 20) {
-                VelaLogo(size: 72).foregroundStyle(palette.text)
+                Image("VelaMark")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 72, height: 72)
+                    .accessibilityHidden(true)
                 Text("Vela")
                     .font(.system(size: 40, weight: .semibold))
                     .tracking(-1)

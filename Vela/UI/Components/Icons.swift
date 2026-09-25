@@ -111,23 +111,6 @@ struct Icon: View {
     }
 }
 
-/// Vela mark: a horizon line with the sun resting above it.
-struct VelaLogo: View {
-    var size: CGFloat = 72
-    var body: some View {
-        Canvas { context, canvas in
-            let u = canvas.width / 64
-            var line = Path()
-            line.move(to: CGPoint(x: 8 * u, y: 42 * u))
-            line.addLine(to: CGPoint(x: 56 * u, y: 42 * u))
-            context.stroke(line, with: .foreground, style: StrokeStyle(lineWidth: 3 * u, lineCap: .round))
-            context.fill(Path(ellipseIn: CGRect(x: 25 * u, y: 20 * u, width: 14 * u, height: 14 * u)), with: .foreground)
-        }
-        .frame(width: size, height: size)
-        .accessibilityHidden(true)
-    }
-}
-
 /// Four signal bars; bars up to `level` are drawn in full color.
 struct SignalBars: View {
     let level: Int
