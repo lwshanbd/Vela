@@ -6,27 +6,27 @@ enum DashboardModule: String, Codable, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .power: "Power"
-        case .range: "Range"
-        case .temps: "Temperature"
-        case .heading: "Heading"
-        case .nav: "Navigation"
-        case .map: "Map"
-        case .climate: "Climate"
-        case .media: "Media"
+        case .power: String(localized: "Power")
+        case .range: String(localized: "Range")
+        case .temps: String(localized: "Temperature")
+        case .heading: String(localized: "Heading")
+        case .nav: String(localized: "Navigation")
+        case .map: String(localized: "Map")
+        case .climate: String(localized: "Climate")
+        case .media: String(localized: "Media")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .power: "kW the motor is using"
-        case .range: "Rated range left"
-        case .temps: "Inside and outside"
-        case .heading: "N, NE, E …"
-        case .nav: "Only while the car navigates"
-        case .map: "Needs internet"
-        case .climate: "Set temperature"
-        case .media: "Hidden when nothing plays"
+        case .power: String(localized: "kW the motor is using")
+        case .range: String(localized: "Rated range left")
+        case .temps: String(localized: "Inside and outside")
+        case .heading: String(localized: "N, NE, E …")
+        case .nav: String(localized: "Only while the car navigates")
+        case .map: String(localized: "Needs internet")
+        case .climate: String(localized: "Set temperature")
+        case .media: String(localized: "Hidden when nothing plays")
         }
     }
 
@@ -45,17 +45,17 @@ enum DashboardAlert: String, Codable, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .tire: "Tire warnings"
-        case .door: "Doors and windows"
-        case .update: "Software updates"
+        case .tire: String(localized: "Tire warnings")
+        case .door: String(localized: "Doors and windows")
+        case .update: String(localized: "Software updates")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .tire: "Only when a tire warns"
-        case .door: "Only when something is open"
-        case .update: "Parked only"
+        case .tire: String(localized: "Only when a tire warns")
+        case .door: String(localized: "Only when something is open")
+        case .update: String(localized: "Parked only")
         }
     }
 }

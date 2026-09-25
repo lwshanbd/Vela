@@ -1,0 +1,2 @@
+/* System Bluetooth permission prompt. */
+"NSBluetoothAlwaysUsageDescription" = "Vela connects to your Tesla over Bluetooth to show speed, gear and battery, and to control climate and music.";

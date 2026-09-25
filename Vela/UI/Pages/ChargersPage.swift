@@ -8,7 +8,7 @@ struct ChargersPage: View {
 
     var body: some View {
         PageScaffold(layout: layout) {
-            PageHeader(title: "SUPERCHARGERS", onBack: model.closePage) {
+            PageHeader(title: String(localized: "SUPERCHARGERS"), onBack: model.closePage) {
                 Button(action: model.refreshSuperchargers) {
                     Group {
                         if model.isLoadingSuperchargers {
@@ -23,25 +23,25 @@ struct ChargersPage: View {
                 }
                 .buttonStyle(PressStyle())
                 .disabled(model.isLoadingSuperchargers || !model.isLive)
-                .accessibilityLabel("Refresh")
+                .accessibilityLabel(String(localized: "Refresh"))
             }
         } content: {
             VStack(spacing: 10) {
                 if let sites = model.superchargers {
                     if sites.isEmpty {
-                        message("No Superchargers nearby", "The car's navigation didn't list any sites.")
+                        message(String(localized: "No Superchargers nearby"), String(localized: "The car's navigation didn't list any sites."))
                     } else {
                         ForEach(sites) { site in row(site) }
-                        Text("Free stalls")
+                        Text(String(localized: "Free stalls"))
                             .font(.system(size: 13))
                             .foregroundStyle(palette.text2)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding(.top, 4)
                     }
                 } else if model.isLoadingSuperchargers {
-                    message("Asking the car…", nil)
+                    message(String(localized: "Asking the car…"), nil)
                 } else {
-                    message(model.isLive ? "Couldn't get Superchargers" : "Not connected", "Tap refresh to ask the car again.")
+                    message(model.isLive ? String(localized: "Couldn't get Superchargers") : String(localized: "Not connected"), String(localized: "Tap refresh to ask the car again."))
                 }
             }
             .padding(.top, 20)
@@ -59,7 +59,7 @@ struct ChargersPage: View {
                 HStack(spacing: 8) {
                     Text(model.distanceLabel(miles: site.distanceMiles))
                     if site.isClosed || !site.withinRange {
-                        Text(site.isClosed ? "Closed" : "Out of range")
+                        Text(site.isClosed ? String(localized: "Station closed") : String(localized: "Out of range"))
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(site.isClosed ? palette.text2 : palette.warn)
                             .padding(.horizontal, 8)
@@ -87,7 +87,7 @@ struct ChargersPage: View {
         .panel()
         .opacity(site.isClosed ? 0.5 : 1)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(site.name), \(model.distanceLabel(miles: site.distanceMiles)), \(site.isClosed ? "closed" : "\(site.availableStalls) of \(site.totalStalls) stalls free")")
+        .accessibilityLabel(String(localized: "\(site.name), \(model.distanceLabel(miles: site.distanceMiles)), \(site.isClosed ? String(localized: "Station closed") : String(localized: "\(site.availableStalls) of \(site.totalStalls) stalls free"))"))
     }
 
     private func message(_ title: String, _ detail: String?) -> some View {

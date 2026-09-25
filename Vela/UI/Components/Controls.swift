@@ -123,7 +123,7 @@ struct VelaSwitch: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
-        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityValue(isOn ? String(localized: "On") : String(localized: "Off"))
         .accessibilityAddTraits(.isToggle)
     }
 }
@@ -259,7 +259,7 @@ struct PillButton: View {
 struct PageHeader<Trailing: View>: View {
     let title: String
     var backGlyph: VelaGlyph = .chevronDown
-    var backLabel = "Back to dashboard"
+    var backLabel = String(localized: "Back to dashboard")
     let onBack: () -> Void
     @ViewBuilder var trailing: () -> Trailing
 
@@ -285,7 +285,7 @@ struct PageHeader<Trailing: View>: View {
 }
 
 extension PageHeader where Trailing == EmptyView {
-    init(title: String, backGlyph: VelaGlyph = .chevronDown, backLabel: String = "Back to dashboard", onBack: @escaping () -> Void) {
+    init(title: String, backGlyph: VelaGlyph = .chevronDown, backLabel: String = String(localized: "Back to dashboard"), onBack: @escaping () -> Void) {
         self.init(title: title, backGlyph: backGlyph, backLabel: backLabel, onBack: onBack) { EmptyView() }
     }
 }

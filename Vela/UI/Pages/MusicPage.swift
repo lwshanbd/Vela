@@ -12,7 +12,7 @@ struct MusicPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PageHeader(title: "NOW PLAYING", onBack: model.closePage) {
+            PageHeader(title: String(localized: "NOW PLAYING"), onBack: model.closePage) {
                 if model.isInGear { HeaderSpeed(value: model.displaySpeed, unit: model.unitLabel) }
             }
             if layout.landscape {
@@ -39,7 +39,7 @@ struct MusicPage: View {
                 progress.padding(.top, 40)
                 transport.padding(.top, 28)
                 if isRadio {
-                    TrackedLabel(text: "FAVORITES", size: 11).padding(.top, 6)
+                    TrackedLabel(text: String(localized: "FAVORITES"), size: 11).padding(.top, 6)
                 }
                 Spacer(minLength: 16)
                 VolumeSlider(model: model)
@@ -64,8 +64,8 @@ struct MusicPage: View {
 
     private var sourceText: String? {
         switch media?.sourceKind {
-        case .bluetooth?: "\(media?.sourceName ?? "Phone") · Bluetooth"
-        case .radio?: media?.sourceName ?? "Radio"
+        case .bluetooth?: String(localized: "\(media?.sourceName ?? String(localized: "Phone")) · Bluetooth")
+        case .radio?: media?.sourceName ?? String(localized: "Radio")
         case .streaming?, .other?: media?.sourceName
         case nil: nil
         }
@@ -75,7 +75,7 @@ struct MusicPage: View {
         let title = (isRadio ? media?.station : nil) ?? media?.title
         let artist = isRadio && media?.station != nil ? (media?.title ?? media?.artist) : media?.artist
         return VStack(spacing: 8) {
-            Text(title.flatMap { $0.isEmpty ? nil : $0 } ?? "Not playing")
+            Text(title.flatMap { $0.isEmpty ? nil : $0 } ?? String(localized: "Not playing"))
                 .font(.system(size: 36, weight: .semibold))
                 .tracking(-0.54)
                 .foregroundStyle(title == nil ? palette.text2 : palette.text)
@@ -96,7 +96,7 @@ struct MusicPage: View {
     @ViewBuilder
     private var progress: some View {
         if isRadio {
-            TrackedLabel(text: "LIVE")
+            TrackedLabel(text: String(localized: "LIVE"))
         } else if let duration = media?.durationSeconds, duration > 0, let elapsed = media?.elapsedSeconds {
             VStack(spacing: 8) {
                 GeometryReader { bar in
@@ -117,19 +117,19 @@ struct MusicPage: View {
                 .foregroundStyle(palette.text2)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(Self.time(elapsed)) of \(Self.time(duration))")
+            .accessibilityLabel(String(localized: "\(Self.time(elapsed)) of \(Self.time(duration))"))
         }
     }
 
     private var transport: some View {
         HStack(spacing: 32) {
             RoundIconButton(.previous, diameter: 72, iconSize: 30, fill: nil,
-                            label: isRadio ? "Previous favorite" : "Previous track") {
+                            label: isRadio ? String(localized: "Previous favorite") : String(localized: "Previous track")) {
                 model.mediaAction(isRadio ? .previousFavorite : .previous)
             }
             PlayToggleButton(model: model, diameter: 88, iconSize: 34, fill: palette.fill)
             RoundIconButton(.next, diameter: 72, iconSize: 30, fill: nil,
-                            label: isRadio ? "Next favorite" : "Next track") {
+                            label: isRadio ? String(localized: "Next favorite") : String(localized: "Next track")) {
                 model.mediaAction(isRadio ? .nextFavorite : .next)
             }
         }
@@ -179,8 +179,8 @@ struct VolumeSlider: View {
                 }
                 .frame(height: 44)
                 .accessibilityElement()
-                .accessibilityLabel("Volume")
-                .accessibilityValue("\(Int(volume.rounded())) of \(Int(maximum))")
+                .accessibilityLabel(String(localized: "Volume"))
+                .accessibilityValue(String(localized: "\(Int(volume.rounded())) of \(Int(maximum))"))
                 .accessibilityAdjustableAction { direction in
                     model.mediaAction(direction == .increment ? .volumeUp : .volumeDown)
                 }

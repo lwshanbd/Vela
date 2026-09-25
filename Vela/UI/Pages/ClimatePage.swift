@@ -13,15 +13,15 @@ struct ClimatePage: View {
     var body: some View {
         let isOn = climate?.isOn ?? false
         PageScaffold(layout: layout) {
-            PageHeader(title: "CLIMATE", onBack: model.closePage) {
+            PageHeader(title: String(localized: "CLIMATE"), onBack: model.closePage) {
                 if model.isInGear { HeaderSpeed(value: model.displaySpeed, unit: model.unitLabel) }
             }
         } content: {
             VStack(alignment: .leading, spacing: 0) {
                 Segmented(
-                    options: [(false, "Off"), (true, "On")],
+                    options: [(false, String(localized: "Off")), (true, String(localized: "On"))],
                     selection: climate.map(\.isOn),
-                    accessibilityLabel: "Climate power",
+                    accessibilityLabel: String(localized: "Climate power"),
                     height: 56
                 ) { model.climateAction(.power($0)) }
                     .padding(.top, 20)
@@ -36,7 +36,7 @@ struct ClimatePage: View {
                     .opacity(isOn ? 1 : 0.32)
                     .padding(.top, 24)
                 Hairline().padding(.top, 20)
-                SwitchRow(title: "Sync both sides", isOn: model.settings.syncClimateZones) {
+                SwitchRow(title: String(localized: "Sync both sides"), isOn: model.settings.syncClimateZones) {
                     model.setSyncZones(!model.settings.syncClimateZones)
                 }
                 seats
@@ -53,9 +53,9 @@ struct ClimatePage: View {
     private var insideOutside: String? {
         let inside = model.insideTempLabel, outside = model.outsideTempLabel
         switch (inside, outside) {
-        case let (i?, o?): return "Inside \(i) · Outside \(o)"
-        case let (i?, nil): return "Inside \(i)"
-        case let (nil, o?): return "Outside \(o)"
+        case let (i?, o?): return String(localized: "Inside \(i) · Outside \(o)")
+        case let (i?, nil): return String(localized: "Inside \(i)")
+        case let (nil, o?): return String(localized: "Outside \(o)")
         default: return nil
         }
     }
@@ -64,12 +64,12 @@ struct ClimatePage: View {
         let sync = model.settings.syncClimateZones
         return HStack(spacing: 0) {
             zone(
-                title: "DRIVER", celsius: model.driverSetpointC, color: palette.text, controlsOpacity: 1,
+                title: String(localized: "DRIVER"), celsius: model.driverSetpointC, color: palette.text, controlsOpacity: 1,
                 down: { model.adjustDriverTemperature(by: -1) }, up: { model.adjustDriverTemperature(by: 1) }
             )
             Hairline(vertical: true)
             zone(
-                title: "PASSENGER", celsius: model.passengerSetpointC,
+                title: String(localized: "PASSENGER"), celsius: model.passengerSetpointC,
                 color: sync ? palette.text2 : palette.text, controlsOpacity: sync ? 0.4 : 1,
                 down: { model.adjustPassengerTemperature(by: -1) }, up: { model.adjustPassengerTemperature(by: 1) }
             )
@@ -95,8 +95,8 @@ struct ClimatePage: View {
                 .frame(height: 64 * 1.05)
                 .accessibilityLabel("\(title.capitalized) \(label)")
             HStack(spacing: 12) {
-                RoundIconButton(.minus, diameter: 64, iconSize: 24, fill: palette.fill, label: "Lower \(who) temperature", action: down)
-                RoundIconButton(.plus, diameter: 64, iconSize: 24, fill: palette.fill, label: "Raise \(who) temperature", action: up)
+                RoundIconButton(.minus, diameter: 64, iconSize: 24, fill: palette.fill, label: String(localized: "Lower \(who) temperature"), action: down)
+                RoundIconButton(.plus, diameter: 64, iconSize: 24, fill: palette.fill, label: String(localized: "Raise \(who) temperature"), action: up)
             }
             .opacity(controlsOpacity)
             .padding(.top, 10)
@@ -106,13 +106,13 @@ struct ClimatePage: View {
 
     @ViewBuilder
     private var seats: some View {
-        let front: [(ClimateReading.Seat, String)] = [(.frontLeft, "Driver"), (.frontRight, "Passenger")]
-        let rear: [(ClimateReading.Seat, String)] = [(.rearLeft, "Rear left"), (.rearCenter, "Center"), (.rearRight, "Rear right")]
+        let front: [(ClimateReading.Seat, String)] = [(.frontLeft, String(localized: "Driver")), (.frontRight, String(localized: "Passenger"))]
+        let rear: [(ClimateReading.Seat, String)] = [(.rearLeft, String(localized: "Rear left")), (.rearCenter, String(localized: "Center")), (.rearRight, String(localized: "Rear right"))]
         let frontHeat = front.filter { model.seatHeatLevel($0.0) != nil }
         let rearHeat = rear.filter { model.seatHeatLevel($0.0) != nil }
         let cool = front.filter { model.seatCoolLevel($0.0) != nil }
         if !frontHeat.isEmpty || !rearHeat.isEmpty {
-            TrackedLabel(text: "SEAT HEATING").padding(.top, 24)
+            TrackedLabel(text: String(localized: "SEAT HEATING")).padding(.top, 24)
             VStack(spacing: 10) {
                 seatGrid(frontHeat, glyph: .heat, dash: 18) { model.seatHeatLevel($0) } tap: { model.cycleSeatHeat($0) }
                 seatGrid(rearHeat, glyph: nil, dash: 14) { model.seatHeatLevel($0) } tap: { model.cycleSeatHeat($0) }
@@ -120,7 +120,7 @@ struct ClimatePage: View {
             .padding(.top, 12)
         }
         if !cool.isEmpty {
-            TrackedLabel(text: "SEAT COOLING").padding(.top, 24)
+            TrackedLabel(text: String(localized: "SEAT COOLING")).padding(.top, 24)
             seatGrid(cool, glyph: .cool, dash: 18) { model.seatCoolLevel($0) } tap: { model.cycleSeatCool($0) }
                 .padding(.top, 12)
         }
@@ -158,8 +158,8 @@ struct ClimatePage: View {
                         .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(palette.fill))
                     }
                     .buttonStyle(PressStyle())
-                    .accessibilityLabel("\(name) seat")
-                    .accessibilityValue("Level \(value) of 3")
+                    .accessibilityLabel(String(localized: "\(name) seat"))
+                    .accessibilityValue(String(localized: "Level \(value) of 3"))
                 }
             }
         }
@@ -169,32 +169,32 @@ struct ClimatePage: View {
     private var wheelAndDefrost: some View {
         Hairline().padding(.top, 24)
         if let wheel = climate?.steeringWheelHeat {
-            SwitchRow(title: "Steering wheel heat", isOn: wheel) { model.climateAction(.steeringWheelHeat(!wheel)) }
+            SwitchRow(title: String(localized: "Steering wheel heat"), isOn: wheel) { model.climateAction(.steeringWheelHeat(!wheel)) }
         }
         if let auto = climate?.autoSeatClimate {
-            SwitchRow(title: "Auto seat climate", isOn: auto) { model.climateAction(.autoSeatClimate(!auto)) }
+            SwitchRow(title: String(localized: "Auto seat climate"), isOn: auto) { model.climateAction(.autoSeatClimate(!auto)) }
         }
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Defrost").font(.system(size: 17)).foregroundStyle(palette.text)
+                Text(String(localized: "Defrost")).font(.system(size: 17)).foregroundStyle(palette.text)
                 if let detail = defrostDetail {
                     Text(detail).font(.system(size: 15)).foregroundStyle(palette.text2)
                 }
             }
             Spacer()
             let max = climate?.maxDefrost ?? false
-            PillButton(title: "Max defrost", selected: max) { model.climateAction(.maxDefrost(!max)) }
+            PillButton(title: String(localized: "Max defrost"), selected: max) { model.climateAction(.maxDefrost(!max)) }
         }
         .frame(minHeight: 64)
         .overlay(alignment: .bottom) { Hairline() }
     }
 
     private var defrostDetail: String? {
-        func word(_ on: Bool?) -> String? { on.map { $0 ? "on" : "off" } }
+        func word(_ on: Bool?) -> String? { on.map { $0 ? String(localized: "on") : String(localized: "off") } }
         switch (word(climate?.frontDefroster), word(climate?.rearDefroster)) {
-        case let (f?, r?): return "Front \(f) · Rear \(r)"
-        case let (f?, nil): return "Front \(f)"
-        case let (nil, r?): return "Rear \(r)"
+        case let (f?, r?): return String(localized: "Front \(f) · Rear \(r)")
+        case let (f?, nil): return String(localized: "Front \(f)")
+        case let (nil, r?): return String(localized: "Rear \(r)")
         default: return nil
         }
     }
@@ -203,7 +203,7 @@ struct ClimatePage: View {
     private var fanRow: some View {
         if let level = climate?.fanLevel {
             HStack {
-                Text("Fan").font(.system(size: 17)).foregroundStyle(palette.text)
+                Text(String(localized: "Fan")).font(.system(size: 17)).foregroundStyle(palette.text)
                 Spacer()
                 HStack(alignment: .bottom, spacing: 3) {
                     ForEach(0 ..< 10, id: \.self) { index in
@@ -213,7 +213,7 @@ struct ClimatePage: View {
                     }
                 }
                 .frame(height: 16, alignment: .bottom)
-                Text(level == 0 ? "Off" : "\(level)")
+                Text(level == 0 ? String(localized: "Off") : "\(level)")
                     .font(.system(size: 17))
                     .foregroundStyle(palette.text2)
                     .frame(minWidth: 20, alignment: .trailing)
@@ -222,34 +222,34 @@ struct ClimatePage: View {
             .frame(height: 60)
             .overlay(alignment: .bottom) { Hairline() }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Fan speed \(level == 0 ? "off" : String(level))")
+            .accessibilityLabel(String(localized: "Fan speed \(level == 0 ? String(localized: "off") : String(level))"))
         }
     }
 
     @ViewBuilder
     private var whenYouLeave: some View {
-        TrackedLabel(text: "WHEN YOU LEAVE THE CAR").padding(.top, 32)
+        TrackedLabel(text: String(localized: "WHEN YOU LEAVE THE CAR")).padding(.top, 32)
         if climate?.keeperMode != nil || climate != nil {
-            Text("Keep climate on").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 16)
+            Text(String(localized: "Keep climate on")).font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 16)
             Segmented(
-                options: [(ClimateReading.KeeperMode.off, "Off"), (.on, "On"), (.dog, "Dog"), (.camp, "Camp")],
+                options: [(ClimateReading.KeeperMode.off, String(localized: "Off")), (.on, String(localized: "On")), (.dog, String(localized: "Dog")), (.camp, String(localized: "Camp"))],
                 selection: climate?.keeperMode,
-                accessibilityLabel: "Keep climate on"
+                accessibilityLabel: String(localized: "Keep climate on")
             ) { model.climateAction(.keeper($0)) }
                 .padding(.top, 12)
         }
-        Text("Cabin overheat protection").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 24)
+        Text(String(localized: "Cabin overheat protection")).font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 24)
         Segmented(
-            options: [(ClimateReading.OverheatProtection.off, "Off"), (.on, "On"), (.fanOnly, "Fan only")],
+            options: [(ClimateReading.OverheatProtection.off, String(localized: "Off")), (.on, String(localized: "On")), (.fanOnly, String(localized: "Fan only"))],
             selection: climate?.overheatProtection,
-            accessibilityLabel: "Cabin overheat protection"
+            accessibilityLabel: String(localized: "Cabin overheat protection")
         ) { model.climateAction(.overheatProtection($0)) }
             .padding(.top, 12)
         HStack {
-            Text("Starts at").font(.system(size: 15)).foregroundStyle(palette.text2)
+            Text(String(localized: "Starts at")).font(.system(size: 15)).foregroundStyle(palette.text2)
             Spacer()
             HStack(spacing: 6) {
-                ForEach([(ClimateReading.OverheatTemp.low, "Low"), (.medium, "Medium"), (.high, "High")], id: \.0) { level, name in
+                ForEach([(ClimateReading.OverheatTemp.low, String(localized: "Low")), (.medium, String(localized: "Medium")), (.high, String(localized: "High"))], id: \.0) { level, name in
                     PillButton(title: name, selected: climate?.overheatTemp == level) {
                         model.climateAction(.overheatTemp(level))
                     }
@@ -259,7 +259,7 @@ struct ClimatePage: View {
         .frame(height: 60)
         .overlay(alignment: .bottom) { Hairline() }
         if let bio = climate?.bioweaponMode {
-            SwitchRow(title: "Bioweapon defense", isOn: bio) { model.climateAction(.bioweapon(!bio)) }
+            SwitchRow(title: String(localized: "Bioweapon defense"), isOn: bio) { model.climateAction(.bioweapon(!bio)) }
         }
         if let heaters = heaterLine {
             Text(heaters)
@@ -272,9 +272,9 @@ struct ClimatePage: View {
 
     private var heaterLine: String? {
         var parts: [String] = []
-        if let on = climate?.batteryHeater { parts.append("Battery heater \(on ? "on" : "off")") }
-        if let on = climate?.wiperHeater { parts.append("Wiper heater \(on ? "on" : "off")") }
-        if let on = climate?.mirrorHeaters { parts.append("Mirror heaters \(on ? "on" : "off")") }
+        if let on = climate?.batteryHeater { parts.append(String(localized: "Battery heater \(on ? String(localized: "on") : String(localized: "off"))")) }
+        if let on = climate?.wiperHeater { parts.append(String(localized: "Wiper heater \(on ? String(localized: "on") : String(localized: "off"))")) }
+        if let on = climate?.mirrorHeaters { parts.append(String(localized: "Mirror heaters \(on ? String(localized: "on") : String(localized: "off"))")) }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 }

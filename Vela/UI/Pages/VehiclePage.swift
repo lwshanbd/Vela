@@ -10,11 +10,11 @@ struct VehiclePage: View {
 
     var body: some View {
         PageScaffold(layout: layout) {
-            PageHeader(title: "VEHICLE", onBack: model.closePage) {
+            PageHeader(title: String(localized: "VEHICLE"), onBack: model.closePage) {
                 Segmented(
                     options: [(PressureUnit.bar, "bar"), (.psi, "psi")],
                     selection: model.settings.pressureUnit,
-                    accessibilityLabel: "Pressure unit",
+                    accessibilityLabel: String(localized: "Pressure unit"),
                     height: 36
                 ) { model.settings.pressureUnit = $0 }
                     .frame(width: 88)
@@ -38,7 +38,7 @@ struct VehiclePage: View {
                     .overlay(alignment: .bottom) { Hairline() }
                 }
                 if model.issues.isEmpty, model.closures != nil {
-                    Text("All closed")
+                    Text(String(localized: "All closed"))
                         .font(.system(size: 17))
                         .foregroundStyle(palette.text2)
                         .frame(minHeight: 48)
@@ -49,7 +49,7 @@ struct VehiclePage: View {
 
     private func pressure(_ bar: Double?) -> String {
         guard let bar else { return "–" }
-        return psi ? "\(Int((bar * 14.5038).rounded()))" : String(format: "%.1f", bar)
+        return psi ? "\(Int((bar * 14.5038).rounded()))" : String(format: "%.1f", locale: Locale.current, bar)
     }
 
     private var recommendedText: String? {
@@ -57,9 +57,9 @@ struct VehiclePage: View {
         let rear = model.tires?.recommendedRearBar
         let unit = psi ? "psi" : "bar"
         if let rear, pressure(rear) != pressure(front) {
-            return "Recommended \(pressure(front)) front, \(pressure(rear)) rear \(unit)"
+            return String(localized: "Recommended \(pressure(front)) front, \(pressure(rear)) rear \(unit)")
         }
-        return "Recommended \(pressure(front)) \(unit)"
+        return String(localized: "Recommended \(pressure(front)) \(unit)")
     }
 
     private var carDiagram: some View {
@@ -103,7 +103,7 @@ struct VehiclePage: View {
                         stroke(d, palette.warn, width)
                     }
                 }
-                TrackedLabel(text: "FRONT")
+                TrackedLabel(text: String(localized: "FRONT"))
                 tireLabel(.frontLeft, tires, low, y: 108 * scale, leading: true)
                 tireLabel(.frontRight, tires, low, y: 108 * scale, leading: false)
                 tireLabel(.rearLeft, tires, low, y: 326 * scale, leading: true)
@@ -122,13 +122,13 @@ struct VehiclePage: View {
             Text(pressure(tires?.pressureBar[position]))
                 .font(.system(size: 28, weight: .semibold))
                 .monospacedDigit()
-            Text(isLow ? "\(unit) · Low" : unit)
+            Text(isLow ? String(localized: "\(unit) · Low") : unit)
                 .font(.system(size: 13, weight: isLow ? .semibold : .regular))
         }
         .foregroundStyle(isLow ? palette.warn : palette.text)
         .frame(maxWidth: .infinity, alignment: leading ? .leading : .trailing)
         .offset(y: y)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(AppModel.name(of: position)) tire \(pressure(tires?.pressureBar[position])) \(unit)\(isLow ? ", low" : "")")
+        .accessibilityLabel(String(localized: "\(AppModel.name(of: position)) tire \(pressure(tires?.pressureBar[position])) \(unit)\(isLow ? String(localized: ", low") : "")"))
     }
 }

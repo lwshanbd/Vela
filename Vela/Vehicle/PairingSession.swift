@@ -29,8 +29,8 @@ final class PairingSession {
         let detail: String
 
         static let timedOut = Failure(
-            title: "Your car didn't confirm",
-            detail: "Pairing timed out. Try again and, when the touchscreen asks, tap your key card on the card reader, then tap Confirm."
+            title: String(localized: "Your car didn't confirm"),
+            detail: String(localized: "Pairing timed out. Try again and, when the touchscreen asks, tap your key card on the card reader, then tap Confirm.")
         )
     }
 
@@ -105,22 +105,22 @@ final class PairingSession {
         } catch {
             guard !Task.isCancelled else { return }
             log.error("pairing failed: \(String(describing: error), privacy: .public)")
-            phase = .failed(Failure(title: "Couldn't reach your car", detail: Self.message(for: error)))
+            phase = .failed(Failure(title: String(localized: "Couldn't reach your car"), detail: Self.message(for: error)))
         }
     }
 
     private static func message(for error: Error) -> String {
         switch error as? TeslaBLEError {
         case .bluetoothUnavailable:
-            "Bluetooth is off or not allowed for Vela."
+            String(localized: "Bluetooth is off or not allowed for Vela.")
         case .scanTimeout:
-            "Couldn't find the car. Stay close to it and check the VIN."
+            String(localized: "Couldn't find the car. Stay close to it and check the VIN.")
         case .addKeyFailed, .connectionFailed, .serviceNotFound, .characteristicsNotFound:
-            "The car didn't accept the request. Try again from inside the car."
+            String(localized: "The car didn't accept the request. Try again from inside the car.")
         case .keychain:
-            "Couldn't save the key on this iPhone."
+            String(localized: "Couldn't save the key on this iPhone.")
         default:
-            "Something went wrong. Try again."
+            String(localized: "Something went wrong. Try again.")
         }
     }
 }

@@ -19,8 +19,8 @@ struct EntriesPanel: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            entry(.lock, "Controls", "Locks, trunks, windows") { context.model.open(.controls) }
-            entry(.bolt, "Chargers", "Nearby Superchargers") { context.model.open(.chargers) }
+            entry(.lock, String(localized: "Controls"), String(localized: "Locks, trunks, windows")) { context.model.open(.controls) }
+            entry(.bolt, String(localized: "Chargers"), String(localized: "Nearby Superchargers")) { context.model.open(.chargers) }
         }
         .frame(height: context.layout.entriesHeight)
     }
@@ -129,7 +129,7 @@ struct MapPanel: View {
                 HStack(spacing: 20) {
                     ZStack(alignment: .top) {
                         Circle().strokeBorder(palette.line, lineWidth: 1.5)
-                        Text("N")
+                        Text(String(localized: "N"))
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(palette.text2)
                             .padding(.top, 5)
@@ -157,7 +157,7 @@ struct MapPanel: View {
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .panel()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Heading \(model.headingLabel ?? "unknown")")
+        .accessibilityLabel(String(localized: "Heading \(model.headingLabel ?? String(localized: "unknown"))"))
     }
 }
 
@@ -171,7 +171,7 @@ struct ClimatePanel: View {
         let layout = context.layout
         let label = model.temperatureLabel(model.driverSetpointC)
         HStack(spacing: 0) {
-            RoundIconButton(.minus, diameter: layout.climateButton, iconSize: 26, fill: palette.pbtn, label: "Lower temperature") {
+            RoundIconButton(.minus, diameter: layout.climateButton, iconSize: 26, fill: palette.pbtn, label: String(localized: "Lower temperature")) {
                 model.adjustDriverTemperature(by: -1)
             }
             Spacer(minLength: 4)
@@ -187,9 +187,9 @@ struct ClimatePanel: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(PressStyle())
-            .accessibilityLabel("Climate, set to \(label). Open climate")
+            .accessibilityLabel(String(localized: "Climate, set to \(label). Open climate"))
             Spacer(minLength: 4)
-            RoundIconButton(.plus, diameter: layout.climateButton, iconSize: 26, fill: palette.pbtn, label: "Raise temperature") {
+            RoundIconButton(.plus, diameter: layout.climateButton, iconSize: 26, fill: palette.pbtn, label: String(localized: "Raise temperature")) {
                 model.adjustDriverTemperature(by: 1)
             }
         }
@@ -208,9 +208,9 @@ struct PlayToggleButton: View {
 
     var body: some View {
         let (glyph, label): (VelaGlyph, String) = switch model.media?.isPlaying {
-        case true?: (.pause, "Pause")
-        case false?: (.play, "Play")
-        case nil: (.playPause, "Play or pause")
+        case true?: (.pause, String(localized: "Pause"))
+        case false?: (.play, String(localized: "Play"))
+        case nil: (.playPause, String(localized: "Play or pause"))
         }
         RoundIconButton(glyph, diameter: diameter, iconSize: iconSize, fill: fill, label: label) {
             model.mediaAction(.togglePlayback)
@@ -243,15 +243,15 @@ struct MediaPanel: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityHint("Opens Now Playing")
+            .accessibilityHint(String(localized: "Opens Now Playing"))
             HStack(spacing: layout.transportGap) {
                 RoundIconButton(.previous, diameter: layout.skipSize, iconSize: 24, fill: nil,
-                                label: radio ? "Previous favorite" : "Previous track") {
+                                label: radio ? String(localized: "Previous favorite") : String(localized: "Previous track")) {
                     model.mediaAction(radio ? .previousFavorite : .previous)
                 }
                 PlayToggleButton(model: model, diameter: layout.playSize, iconSize: 26, fill: palette.pbtn)
                 RoundIconButton(.next, diameter: layout.skipSize, iconSize: 24, fill: nil,
-                                label: radio ? "Next favorite" : "Next track") {
+                                label: radio ? String(localized: "Next favorite") : String(localized: "Next track")) {
                     model.mediaAction(radio ? .nextFavorite : .next)
                 }
             }

@@ -93,7 +93,7 @@ struct StatusHeader: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(PressStyle())
-                .accessibilityLabel("Settings")
+                .accessibilityLabel(String(localized: "Settings"))
                 .transition(.opacity)
             }
         }
@@ -117,12 +117,12 @@ struct StatusHeader: View {
 
     private var accessibilityStatus: String {
         switch model.link {
-        case .connected: "Connected to \(model.vehicleName)"
-        case .asleep: "\(model.vehicleName) is asleep"
-        case .lost: "Connection lost"
-        case .bluetoothOff: "Bluetooth off"
-        case .bluetoothUnauthorized: "Bluetooth access off"
-        case .idle, .connecting: "Connecting"
+        case .connected: String(localized: "Connected to \(model.vehicleName)")
+        case .asleep: String(localized: "\(model.vehicleName) is asleep")
+        case .lost: String(localized: "Connection lost")
+        case .bluetoothOff: String(localized: "Bluetooth off")
+        case .bluetoothUnauthorized: String(localized: "Bluetooth access off")
+        case .idle, .connecting: String(localized: "Connecting")
         }
     }
 }
@@ -152,7 +152,7 @@ struct InstrumentView: View {
                     .fixedSize()
                     .frame(height: size * 0.86)
                     .contentTransition(.identity)
-                    .accessibilityLabel("\(speed) \(model.settings.units == .mph ? "miles per hour" : "kilometers per hour")")
+                    .accessibilityLabel(model.settings.units == .mph ? String(localized: "\(speed) miles per hour") : String(localized: "\(speed) kilometers per hour"))
             } else {
                 RoundedRectangle(cornerRadius: 3)
                     .fill(palette.text3)
@@ -223,7 +223,7 @@ struct PowerBar: View {
         }
         .frame(height: 22)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Power \(kw) kilowatts")
+        .accessibilityLabel(String(localized: "Power \(kw) kilowatts"))
     }
 }
 
@@ -241,7 +241,7 @@ struct GearRow: View {
                 Text(gear.rawValue)
                     .font(.system(size: size, weight: .semibold))
                     .foregroundStyle(tint)
-                    .accessibilityLabel("Gear \(gear.rawValue)")
+                    .accessibilityLabel(String(localized: "Gear \(gear.rawValue)"))
             }
             if model.gear != nil || parked, model.batteryLevel != nil {
                 Circle().fill(palette.text3).frame(width: 4, height: 4)
@@ -261,7 +261,7 @@ struct GearRow: View {
                 .buttonStyle(.plain)
                 .allowsHitTesting(model.isCharging)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Battery \(battery) percent")
+                .accessibilityLabel(String(localized: "Battery \(battery) percent"))
                 .accessibilityAddTraits(model.isCharging ? .isButton : [])
             }
         }
@@ -325,11 +325,11 @@ struct ConnectionMessage: View {
 
     var body: some View {
         let (title, color, subtitle): (String, Color, String?) = switch model.link {
-        case .asleep: ("\(model.vehicleName) is asleep", palette.text2, "Vela connects when someone opens a door.")
-        case .lost: ("Connection lost", palette.warn, "Reconnecting automatically")
-        case .bluetoothOff: ("Bluetooth is off", palette.text, "Turn it on in Control Center")
-        case .bluetoothUnauthorized: ("Bluetooth access is off", palette.text, "Vela needs Bluetooth to talk to your car.")
-        case .idle, .connecting, .connected: ("Connecting to \(model.vehicleName)", palette.text2, nil)
+        case .asleep: (String(localized: "\(model.vehicleName) is asleep"), palette.text2, String(localized: "Vela connects when someone opens a door."))
+        case .lost: (String(localized: "Connection lost"), palette.warn, String(localized: "Reconnecting automatically"))
+        case .bluetoothOff: (String(localized: "Bluetooth is off"), palette.text, String(localized: "Turn it on in Control Center"))
+        case .bluetoothUnauthorized: (String(localized: "Bluetooth access is off"), palette.text, String(localized: "Vela needs Bluetooth to talk to your car."))
+        case .idle, .connecting, .connected: (String(localized: "Connecting to \(model.vehicleName)"), palette.text2, nil)
         }
         VStack(spacing: 8) {
             Text(title)
@@ -347,7 +347,7 @@ struct ConnectionMessage: View {
                 Button {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 } label: {
-                    Text("Open Settings")
+                    Text(String(localized: "Open Settings"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(palette.bg)
                         .padding(.horizontal, 22)
@@ -406,11 +406,11 @@ struct ParkPanel: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
                         Icon(locked == false ? .unlock : .lock, size: 16)
-                        Text(locked == nil ? "Vehicle" : locked! ? "Locked" : "Unlocked")
+                        Text(locked == nil ? String(localized: "Vehicle") : locked! ? String(localized: "Locked") : String(localized: "Unlocked"))
                             .font(.system(size: 17, weight: .semibold))
                     }
                     .foregroundStyle(palette.text)
-                    Text(count == 0 ? "All closed" : "\(count) need attention")
+                    Text(count == 0 ? String(localized: "All closed") : String(localized: "\(count) need attention"))
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(count == 0 ? palette.text2 : palette.warn)
                 }
@@ -418,7 +418,7 @@ struct ParkPanel: View {
                 if model.showsUpdateBadge {
                     HStack(spacing: 6) {
                         Icon(.update, size: 14)
-                        Text("Update").font(.system(size: 13, weight: .semibold))
+                        Text(String(localized: "Update")).font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundStyle(palette.text)
                     .padding(.horizontal, 10)
@@ -434,7 +434,7 @@ struct ParkPanel: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
-        .accessibilityLabel("Vehicle status, \(locked == false ? "unlocked" : "locked"), \(count == 0 ? "all closed" : "\(count) need attention")")
+        .accessibilityLabel(String(localized: "Vehicle status, \(locked == nil ? String(localized: "Lock state unknown") : locked! ? String(localized: "Locked") : String(localized: "Unlocked")), \(count == 0 ? String(localized: "All closed") : String(localized: "\(count) need attention"))"))
     }
 }
 

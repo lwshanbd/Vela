@@ -12,21 +12,21 @@ struct ControlsPage: View {
 
     var body: some View {
         PageScaffold(layout: layout) {
-            PageHeader(title: "CONTROLS", onBack: model.closePage)
+            PageHeader(title: String(localized: "CONTROLS"), onBack: model.closePage)
         } content: {
             VStack(spacing: 0) {
                 lockButton.padding(.top, 20)
                 VStack(spacing: 0) {
                     frunkRow
                     openCloseRow(
-                        glyph: .rearTrunk, name: "Rear trunk", key: "trunk",
-                        isOpen: closures?.open.contains(.trunk), openWord: "Open",
-                        openAction: .openTrunk, closeAction: .closeTrunk, openVerb: "Open"
+                        glyph: .rearTrunk, name: String(localized: "Rear trunk"), key: "trunk",
+                        isOpen: closures?.open.contains(.trunk), openWord: String(localized: "Opened"),
+                        openAction: .openTrunk, closeAction: .closeTrunk, openVerb: String(localized: "Open")
                     )
                     openCloseRow(
-                        glyph: .window, name: "Windows", key: "windows",
+                        glyph: .window, name: String(localized: "Windows"), key: "windows",
                         isOpen: closures.map { !$0.open.isDisjoint(with: [.frontLeftWindow, .frontRightWindow, .rearLeftWindow, .rearRightWindow]) },
-                        openWord: "Vented", openAction: .ventWindows, closeAction: .closeWindows, openVerb: "Vent"
+                        openWord: String(localized: "Vented"), openAction: .ventWindows, closeAction: .closeWindows, openVerb: String(localized: "Vent")
                     )
                     sentryRow
                 }
@@ -36,7 +36,7 @@ struct ControlsPage: View {
                     withAnimation(.easeOut(duration: 0.2)) { showsMore.toggle() }
                 } label: {
                     HStack {
-                        Text("More").font(.system(size: 15, weight: .semibold))
+                        Text(String(localized: "More")).font(.system(size: 15, weight: .semibold))
                         Spacer()
                         Icon(.chevronDown, size: 18).rotationEffect(.degrees(showsMore ? 180 : 0))
                     }
@@ -46,30 +46,30 @@ struct ControlsPage: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(.isButton)
-                .accessibilityValue(showsMore ? "Expanded" : "Collapsed")
+                .accessibilityValue(showsMore ? String(localized: "Expanded") : String(localized: "Collapsed"))
 
                 if showsMore {
                     VStack(spacing: 0) {
                         if closures?.hasSunroof == true {
                             openCloseRow(
-                                glyph: .sunroof, name: "Sunroof", key: "sunroof",
-                                isOpen: closures?.open.contains(.sunroof), openWord: "Open",
-                                openAction: .ventSunroof, closeAction: .closeSunroof, openVerb: "Vent"
+                                glyph: .sunroof, name: String(localized: "Sunroof"), key: "sunroof",
+                                isOpen: closures?.open.contains(.sunroof), openWord: String(localized: "Opened"),
+                                openAction: .ventSunroof, closeAction: .closeSunroof, openVerb: String(localized: "Vent")
                             )
                         }
                         openCloseRow(
-                            glyph: .bolt, name: "Charge port", key: "port",
-                            isOpen: model.charge?.portOpen, openWord: "Open",
-                            openAction: .openChargePort, closeAction: .closeChargePort, openVerb: "Open"
+                            glyph: .bolt, name: String(localized: "Charge port"), key: "port",
+                            isOpen: model.charge?.portOpen, openWord: String(localized: "Opened"),
+                            openAction: .openChargePort, closeAction: .closeChargePort, openVerb: String(localized: "Open")
                         )
                         if model.location?.homelinkNearby == true {
-                            row(glyph: .garage, name: "Garage door", state: "Nearby", attention: false) {
-                                actionButton("Open", key: "homelink") { model.control(.homelink, key: "homelink") }
+                            row(glyph: .garage, name: String(localized: "Garage door"), state: String(localized: "Nearby"), attention: false) {
+                                actionButton(String(localized: "Open"), key: "homelink") { model.control(.homelink, key: "homelink") }
                             }
                         }
                         HStack(spacing: 10) {
-                            wideButton("Honk", key: "honk", action: .honk)
-                            wideButton("Flash lights", key: "flash", action: .flashLights)
+                            wideButton(String(localized: "Honk"), key: "honk", action: .honk)
+                            wideButton(String(localized: "Flash lights"), key: "flash", action: .flashLights)
                         }
                         .padding(.top, 16)
                     }
@@ -89,9 +89,9 @@ struct ControlsPage: View {
             HStack(spacing: 16) {
                 Icon(locked == false ? .unlock : .lock, size: 30, lineWidth: 1.7)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(locked == nil ? "–" : locked! ? "Locked" : "Unlocked")
+                    Text(locked == nil ? "–" : locked! ? String(localized: "Locked") : String(localized: "Unlocked"))
                         .font(.system(size: 24, weight: .semibold))
-                    Text(locked == nil ? "Waiting for the car" : "Tap to \(locked! ? "unlock" : "lock")")
+                    Text(locked == nil ? String(localized: "Waiting for the car") : (locked! ? String(localized: "Tap to unlock") : String(localized: "Tap to lock")))
                         .font(.system(size: 15))
                         .foregroundStyle(palette.text2)
                 }
@@ -106,15 +106,15 @@ struct ControlsPage: View {
         }
         .buttonStyle(PressStyle())
         .disabled(locked == nil || busy)
-        .accessibilityLabel(locked == nil ? "Lock state unknown" : locked! ? "Locked. Unlock the car" : "Unlocked. Lock the car")
+        .accessibilityLabel(locked == nil ? String(localized: "Lock state unknown") : locked! ? String(localized: "Locked. Unlock the car") : String(localized: "Unlocked. Lock the car"))
     }
 
     /// The front trunk can be opened over BLE but not closed.
     private var frunkRow: some View {
         let isOpen = closures?.open.contains(.frunk)
-        return row(glyph: .frontTrunk, name: "Front trunk", state: stateWord(isOpen, open: "Open"), attention: isOpen == true) {
+        return row(glyph: .frontTrunk, name: String(localized: "Front trunk"), state: stateWord(isOpen, open: String(localized: "Opened")), attention: isOpen == true) {
             if isOpen == false {
-                actionButton("Open", key: "frunk") { model.control(.openFrunk, key: "frunk") }
+                actionButton(String(localized: "Open"), key: "frunk") { model.control(.openFrunk, key: "frunk") }
             }
         }
     }
@@ -123,17 +123,17 @@ struct ControlsPage: View {
         let sentry = closures?.sentry
         let isOn = sentry.map { $0 != .off }
         let state: String = switch sentry {
-        case .off?: "Off"
-        case .idle?: "Standby"
-        case .armed?: "Armed"
-        case .aware?: "Aware"
-        case .panic?: "Alarm"
-        case .quiet?: "Quiet"
+        case .off?: String(localized: "Off")
+        case .idle?: String(localized: "Standby")
+        case .armed?: String(localized: "Armed")
+        case .aware?: String(localized: "Aware")
+        case .panic?: String(localized: "Alarm")
+        case .quiet?: String(localized: "Quiet")
         case nil: "–"
         }
-        return row(glyph: .eye, name: "Sentry Mode", state: state, attention: false) {
+        return row(glyph: .eye, name: String(localized: "Sentry Mode"), state: state, attention: false) {
             if let isOn {
-                VelaSwitch(isOn: isOn, label: "Sentry Mode") { model.control(.sentry(!isOn), key: "sentry") }
+                VelaSwitch(isOn: isOn, label: String(localized: "Sentry Mode")) { model.control(.sentry(!isOn), key: "sentry") }
             }
         }
     }
@@ -144,7 +144,7 @@ struct ControlsPage: View {
     ) -> some View {
         row(glyph: glyph, name: name, state: stateWord(isOpen, open: openWord), attention: isOpen == true) {
             if let isOpen {
-                actionButton(isOpen ? "Close" : openVerb, key: key) {
+                actionButton(isOpen ? String(localized: "Close") : openVerb, key: key) {
                     model.control(isOpen ? closeAction : openAction, key: key)
                 }
             }
@@ -154,7 +154,7 @@ struct ControlsPage: View {
     private func stateWord(_ isOpen: Bool?, open: String) -> String {
         switch isOpen {
         case true?: open
-        case false?: "Closed"
+        case false?: String(localized: "Closed")
         case nil: "–"
         }
     }

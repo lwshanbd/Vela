@@ -11,7 +11,7 @@ struct SpeedDisplayPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PageHeader(title: "SPEED DISPLAY", backGlyph: .chevronLeft, backLabel: "Back to settings", onBack: onBack)
+            PageHeader(title: String(localized: "SPEED DISPLAY"), backGlyph: .chevronLeft, backLabel: String(localized: "Back to settings"), onBack: onBack)
             if layout.landscape {
                 HStack(spacing: 40) {
                     preview(height: layout.contentHeight - 44).frame(maxWidth: .infinity)
@@ -24,7 +24,7 @@ struct SpeedDisplayPage: View {
                 Hairline()
                 ScrollView(.vertical) { controls }
                     .scrollBounceBehavior(.basedOnSize)
-                Text("Color applies to speed and gear. Controls stay neutral.")
+                Text(String(localized: "Color applies to speed and gear. Controls stay neutral."))
                     .font(.system(size: 13))
                     .foregroundStyle(palette.text2)
                     .multilineTextAlignment(.center)
@@ -69,14 +69,14 @@ struct SpeedDisplayPage: View {
         .frame(height: height)
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Preview")
+        .accessibilityLabel(String(localized: "Preview"))
     }
 
     private var controls: some View {
         let settings = model.settings
         return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
-                Text("Color").font(.system(size: 17)).foregroundStyle(palette.text)
+                Text(String(localized: "Color")).font(.system(size: 17)).foregroundStyle(palette.text)
                 Spacer()
                 Text(settings.tint.displayName).font(.system(size: 15)).foregroundStyle(palette.text2)
             }
@@ -104,11 +104,11 @@ struct SpeedDisplayPage: View {
             .padding(.top, 14)
 
             Hairline().padding(.top, 24)
-            Text("Background").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 18)
+            Text(String(localized: "Background")).font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 18)
             Segmented(
                 options: SpeedGround.allCases.map { ($0, $0.displayName(dark: palette.isDark)) },
                 selection: settings.ground,
-                accessibilityLabel: "Background",
+                accessibilityLabel: String(localized: "Background"),
                 leading: { ground in
                     AnyView(
                         Circle()
@@ -121,11 +121,11 @@ struct SpeedDisplayPage: View {
                 .padding(.top, 12)
 
             Hairline().padding(.top, 22)
-            Text("Numerals").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 18)
+            Text(String(localized: "Numerals")).font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 18)
             Segmented(
-                options: [(SpeedNumerals.regular, "Regular"), (.bold, "Bold")],
+                options: [(SpeedNumerals.regular, String(localized: "Regular")), (.bold, String(localized: "Bold"))],
                 selection: settings.numerals,
-                accessibilityLabel: "Numerals",
+                accessibilityLabel: String(localized: "Numerals"),
                 labelWeight: { $0 == .bold ? palette.speedBold : palette.speedRegular }
             ) { settings.numerals = $0 }
                 .padding(.top, 12)

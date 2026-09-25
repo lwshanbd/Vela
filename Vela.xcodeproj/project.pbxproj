@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0242D4A6519F9108A97C89ED /* VehiclePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF0FBA594A1ED40A4B2A70D /* VehiclePage.swift */; };
+		132B50484A805CEC2019B059 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 60621C1C3D4B7495A618D407 /* Localizable.xcstrings */; };
 		14F8C97D5AE834004135DBA4 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA7FC37439C5202F1081295 /* NetworkMonitor.swift */; };
 		1BFCB4677EC694D67CA4CB8C /* PairingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB258B73E2DD658C025954B5 /* PairingSession.swift */; };
 		2175EC6D56D5948B46326417 /* VehicleIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */; };
@@ -20,6 +21,7 @@
 		6A9DCA1AAF6E1265B3F8CCA1 /* DashboardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8991808EEF023354CB2D8DDD /* DashboardLayout.swift */; };
 		6BE642BFF9CD292A9BF81C6B /* DeckModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F012C21A8C7FDA7CF0958B /* DeckModules.swift */; };
 		72CB8F92DDA7BD6155071AD1 /* VelaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789862BF13686674B5EB72A3 /* VelaApp.swift */; };
+		79D04C364430931B609EA27E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 257E9D76E2441589F0099644 /* InfoPlist.strings */; };
 		7F41A66194EA27D01FA3B303 /* PreviewFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */; };
 		8167693213FD81C0313A8B60 /* SVGPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6822AA700B8B0971ACC4C4DF /* SVGPath.swift */; };
 		8445B24443D50CE50706D6CF /* DashboardConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720984EABFCBD304F685468 /* DashboardConfig.swift */; };
@@ -58,9 +60,12 @@
 		4D9923C8F1F378EC06689ABC /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFixtures.swift; sourceTree = "<group>"; };
 		5C19C1E68CFF33E627BF0E87 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		60621C1C3D4B7495A618D407 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		6651A00E314437E6B0156011 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6822AA700B8B0971ACC4C4DF /* SVGPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGPath.swift; sourceTree = "<group>"; };
 		6EE915EFF4F63B48E1D9FFFF /* DashboardSettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettingsPage.swift; sourceTree = "<group>"; };
 		789862BF13686674B5EB72A3 /* VelaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VelaApp.swift; sourceTree = "<group>"; };
+		7C3F9FFFFCA91E46C3BC85D3 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		7F0A08CA58321A3142A79D46 /* ClimatePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimatePage.swift; sourceTree = "<group>"; };
 		804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleIdentity.swift; sourceTree = "<group>"; };
 		889789B4CB0B1416E0F56C64 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -207,6 +212,8 @@
 			isa = PBXGroup;
 			children = (
 				06C3337ACED2B2DC57D7FF2B /* Assets.xcassets */,
+				60621C1C3D4B7495A618D407 /* Localizable.xcstrings */,
+				257E9D76E2441589F0099644 /* InfoPlist.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -274,6 +281,7 @@
 			knownRegions = (
 				Base,
 				en,
+				"zh-Hans",
 			);
 			mainGroup = 8D8AC28433B2AC935501E5A2;
 			minimizedProjectReferenceProxies = 1;
@@ -296,6 +304,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF22D988389224DBB8937340 /* Assets.xcassets in Resources */,
+				79D04C364430931B609EA27E /* InfoPlist.strings in Resources */,
+				132B50484A805CEC2019B059 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +351,18 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		257E9D76E2441589F0099644 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6651A00E314437E6B0156011 /* en */,
+				7C3F9FFFFCA91E46C3BC85D3 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		1CEE218FF8A747D74AC0ED38 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -366,6 +388,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.baodi.vela;
 				PRODUCT_NAME = Vela;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -518,6 +541,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.baodi.vela;
 				PRODUCT_NAME = Vela;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

@@ -38,53 +38,53 @@ private struct SettingsRoot: View {
     var body: some View {
         let settings = model.settings
         PageScaffold(layout: layout) {
-            PageHeader(title: "SETTINGS", onBack: model.closePage)
+            PageHeader(title: String(localized: "SETTINGS"), onBack: model.closePage)
         } content: {
             VStack(alignment: .leading, spacing: 0) {
-                TrackedLabel(text: "VEHICLE").padding(.top, 28)
+                TrackedLabel(text: String(localized: "VEHICLE")).padding(.top, 28)
                 Hairline().padding(.top, 10)
                 vehicleRow
                 Hairline()
-                Button { model.pairAgain() } label: { chevronRow("Pair again", detail: nil, height: 56) }
+                Button { model.pairAgain() } label: { chevronRow(String(localized: "Pair again"), detail: nil, height: 56) }
                     .buttonStyle(.plain)
                 Hairline()
                 Button {
                     confirmsRemoval = true
                 } label: {
-                    Text("Remove vehicle")
+                    Text(String(localized: "Remove vehicle"))
                         .font(.system(size: 17))
                         .foregroundStyle(palette.danger)
                         .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .confirmationDialog("Remove \(model.vehicleName) from Vela?", isPresented: $confirmsRemoval, titleVisibility: .visible) {
-                    Button("Remove vehicle", role: .destructive) { model.removeVehicle() }
+                .confirmationDialog(String(localized: "Remove \(model.vehicleName) from Vela?"), isPresented: $confirmsRemoval, titleVisibility: .visible) {
+                    Button(String(localized: "Remove vehicle"), role: .destructive) { model.removeVehicle() }
                 } message: {
-                    Text("Vela deletes its key from this iPhone. To remove the key from the car too, open Locks on the touchscreen.")
+                    Text(String(localized: "Vela deletes its key from this iPhone. To remove the key from the car too, open Locks on the touchscreen."))
                 }
                 Hairline()
 
-                TrackedLabel(text: "DISPLAY").padding(.top, 36)
+                TrackedLabel(text: String(localized: "DISPLAY")).padding(.top, 36)
                 Hairline().padding(.top, 10)
-                segmentBlock("Speed units") {
-                    Segmented(options: [(SpeedUnit.mph, "MPH"), (.kmh, "km/h")], selection: settings.units,
-                              accessibilityLabel: "Speed units") { settings.units = $0 }
+                segmentBlock(String(localized: "Speed units")) {
+                    Segmented(options: [(SpeedUnit.mph, String(localized: "MPH")), (.kmh, String(localized: "km/h"))], selection: settings.units,
+                              accessibilityLabel: String(localized: "Speed units")) { settings.units = $0 }
                 }
                 Hairline()
-                segmentBlock("Appearance") {
-                    Segmented(options: [(Appearance.system, "System"), (.light, "Light"), (.dark, "Dark")],
-                              selection: settings.appearance, accessibilityLabel: "Appearance") { settings.appearance = $0 }
+                segmentBlock(String(localized: "Appearance")) {
+                    Segmented(options: [(Appearance.system, String(localized: "System")), (.light, String(localized: "Light")), (.dark, String(localized: "Dark"))],
+                              selection: settings.appearance, accessibilityLabel: String(localized: "Appearance")) { settings.appearance = $0 }
                 }
                 Hairline()
                 Button { open(.dashboard) } label: {
-                    chevronRow("Dashboard", detail: "\(settings.dashboard.enabledCount) modules", height: 60)
+                    chevronRow(String(localized: "Dashboard"), detail: String(localized: "\(settings.dashboard.enabledCount) modules"), height: 60)
                 }
                 .buttonStyle(.plain)
                 Hairline()
                 Button { open(.speedDisplay) } label: {
                     HStack {
-                        Text("Speed display").font(.system(size: 17)).foregroundStyle(palette.text)
+                        Text(String(localized: "Speed display")).font(.system(size: 17)).foregroundStyle(palette.text)
                         Spacer()
                         HStack(spacing: 10) {
                             Circle()
@@ -103,7 +103,7 @@ private struct SettingsRoot: View {
                 .buttonStyle(.plain)
                 Hairline()
                 SwitchRow(
-                    title: "Keep screen on while driving", subtitle: "While connected to your car",
+                    title: String(localized: "Keep screen on while driving"), subtitle: String(localized: "While connected to your car"),
                     isOn: settings.keepScreenOn, height: 80
                 ) { settings.keepScreenOn.toggle() }
 
@@ -118,12 +118,12 @@ private struct SettingsRoot: View {
 
     private var vehicleRow: some View {
         let status: (text: String, warn: Bool) = switch model.link {
-        case .connected: ("Connected · Phone key", false)
-        case .connecting, .idle: ("Connecting · Phone key", false)
-        case .asleep: ("Asleep · Phone key", false)
-        case .lost: ("Reconnecting · Phone key", true)
-        case .bluetoothOff: ("Bluetooth is off", true)
-        case .bluetoothUnauthorized: ("Bluetooth access is off", true)
+        case .connected: (String(localized: "Connected · Phone key"), false)
+        case .connecting, .idle: (String(localized: "Connecting · Phone key"), false)
+        case .asleep: (String(localized: "Asleep · Phone key"), false)
+        case .lost: (String(localized: "Reconnecting · Phone key"), true)
+        case .bluetoothOff: (String(localized: "Bluetooth is off"), true)
+        case .bluetoothUnauthorized: (String(localized: "Bluetooth access is off"), true)
         }
         return HStack {
             VStack(alignment: .leading, spacing: 3) {

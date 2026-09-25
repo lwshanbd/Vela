@@ -95,7 +95,7 @@ struct SetupBackBar: View {
     let model: AppModel
     var body: some View {
         HStack {
-            CircleNavButton(glyph: .chevronLeft, label: "Back") { model.goBack() }
+            CircleNavButton(glyph: .chevronLeft, label: String(localized: "Back")) { model.goBack() }
             Spacer()
         }
         .frame(height: 44)
@@ -168,7 +168,7 @@ struct WelcomeScreen: View {
                     .font(.system(size: 40, weight: .semibold))
                     .tracking(-1)
                     .foregroundStyle(palette.text)
-                Text("A calm second screen for your Tesla.")
+                Text(String(localized: "A calm second screen for your Tesla."))
                     .font(.system(size: 19))
                     .foregroundStyle(palette.text2)
                     .multilineTextAlignment(.center)
@@ -177,8 +177,8 @@ struct WelcomeScreen: View {
             .padding(.bottom, 40)
             .frame(maxHeight: .infinity)
             VStack(spacing: 16) {
-                PrimaryButton(title: "Get started") { model.advance(to: .finding) }
-                Text("Connects to your car over Bluetooth. No account needed.")
+                PrimaryButton(title: String(localized: "Get started")) { model.advance(to: .finding) }
+                Text(String(localized: "Connects to your car over Bluetooth. No account needed."))
                     .font(.system(size: 13))
                     .foregroundStyle(palette.text2)
                     .multilineTextAlignment(.center)
@@ -195,8 +195,8 @@ struct FindingScreen: View {
         VStack(spacing: 0) {
             SetupBackBar(model: model)
             SetupTitle(
-                title: "Finding your Tesla",
-                detail: "Stay near your car with Bluetooth on. This usually takes a few seconds."
+                title: String(localized: "Finding your Tesla"),
+                detail: String(localized: "Stay near your car with Bluetooth on. This usually takes a few seconds.")
             )
             .padding(.top, 28)
             ZStack {
@@ -233,17 +233,17 @@ struct ScannerStatusLine: View {
     var body: some View {
         switch scanner.status {
         case .poweredOff:
-            Text("Turn on Bluetooth to search")
+            Text(String(localized: "Turn on Bluetooth to search"))
                 .font(.system(size: 17)).foregroundStyle(palette.warn)
                 .frame(maxWidth: .infinity, minHeight: 56)
         case .unauthorized:
-            Button("Allow Bluetooth in Settings") {
+            Button(String(localized: "Allow Bluetooth in Settings")) {
                 if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
             }
             .font(.system(size: 17, weight: .medium)).foregroundStyle(palette.warn)
             .frame(maxWidth: .infinity, minHeight: 56)
         default:
-            StatusLine(text: "Searching nearby")
+            StatusLine(text: String(localized: "Searching nearby"))
         }
     }
 }
@@ -255,7 +255,7 @@ struct ChooseCarScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             SetupBackBar(model: model)
-            SetupTitle(title: "Choose your car", detail: "Pick the one you're sitting in. The closest car is listed first.")
+            SetupTitle(title: String(localized: "Choose your car"), detail: String(localized: "Pick the one you're sitting in. The closest car is listed first."))
                 .padding(.top, 28)
             Hairline().padding(.top, 32)
             ScrollView(.vertical) {
@@ -278,7 +278,7 @@ struct ChooseCarScreen: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             Button(action: model.searchAgain) {
-                Text("Search again")
+                Text(String(localized: "Search again"))
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.text)
                     .frame(maxWidth: .infinity, minHeight: 56)
@@ -292,10 +292,10 @@ struct ChooseCarScreen: View {
     /// a trustworthy distance.
     private func row(_ car: NearbyTeslaScanner.Advertisement) -> some View {
         let (bars, tier): (Int, String) = switch car.rssi {
-        case (-60)...: (4, "Very close · likely the car you are in")
-        case -72 ..< -60: (3, "Nearby")
-        case -84 ..< -72: (2, "A bit farther")
-        default: (1, "Far")
+        case (-60)...: (4, String(localized: "Very close · likely the car you are in"))
+        case -72 ..< -60: (3, String(localized: "Nearby"))
+        case -84 ..< -72: (2, String(localized: "A bit farther"))
+        default: (1, String(localized: "Far"))
         }
         return HStack(spacing: 16) {
             SignalBars(level: bars, on: palette.text, off: palette.fill2)
@@ -345,8 +345,8 @@ struct EnterVINScreen: View {
         let (message, bad): (String?, Bool) = switch check {
         case .typing: (nil, false)
         case let .valid(identity): (identity.modelName, false)
-        case .format: ("A VIN has 17 letters and numbers and never uses I, O or Q.", true)
-        case .mismatch: ("This VIN belongs to a different car than the one you picked. Check it, or go back and pick another car.", true)
+        case .format: (String(localized: "A VIN has 17 letters and numbers and never uses I, O or Q."), true)
+        case .mismatch: (String(localized: "This VIN belongs to a different car than the one you picked. Check it, or go back and pick another car."), true)
         }
         let validIdentity: VehicleIdentity? = if case let .valid(identity) = check { identity } else { nil }
         VStack(spacing: 0) {
@@ -354,11 +354,11 @@ struct EnterVINScreen: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 0) {
                     SetupTitle(
-                        title: "Enter the VIN",
-                        detail: "Vela needs the 17-character VIN to set up the key for this car. It stays on this phone."
+                        title: String(localized: "Enter the VIN"),
+                        detail: String(localized: "Vela needs the 17-character VIN to set up the key for this car. It stays on this phone.")
                     )
                     .padding(.top, 28)
-                    TrackedLabel(text: "VIN").padding(.top, 32)
+                    TrackedLabel(text: String(localized: "VIN")).padding(.top, 32)
                     TextField("", text: $text)
                         .font(.system(size: 20, design: .monospaced))
                         .tracking(1.6)
@@ -381,7 +381,7 @@ struct EnterVINScreen: View {
                             let upper = String(new.uppercased().filter { !$0.isWhitespace }.prefix(17))
                             if upper != new { text = upper }
                         }
-                        .accessibilityLabel("VIN")
+                        .accessibilityLabel(String(localized: "VIN"))
                     HStack(alignment: .top, spacing: 12) {
                         if let message {
                             HStack(alignment: .top, spacing: 8) {
@@ -402,14 +402,14 @@ struct EnterVINScreen: View {
                     }
                     .padding(.top, 10)
 
-                    TrackedLabel(text: "WHERE TO FIND IT").padding(.top, 32)
+                    TrackedLabel(text: String(localized: "WHERE TO FIND IT")).padding(.top, 32)
                     Hairline().padding(.top, 10)
-                    findRow("On the touchscreen: Controls › Software")
-                    findRow("Bottom of the windshield, driver's side")
+                    findRow(String(localized: "On the touchscreen: Controls › Software"))
+                    findRow(String(localized: "Bottom of the windshield, driver's side"))
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
-            PrimaryButton(title: "Continue", enabled: validIdentity != nil) {
+            PrimaryButton(title: String(localized: "Continue"), enabled: validIdentity != nil) {
                 if let validIdentity {
                     focused = false
                     model.advance(to: .addKey(validIdentity))
@@ -445,17 +445,17 @@ struct AddKeyScreen: View {
                         .background(Circle().fill(palette.fill))
                         .padding(.top, 36)
                     SetupTitle(
-                        title: "Add Vela as a key",
-                        detail: "Your car adds Vela as a phone key. Vela uses it to show driving and charging info, and for the controls you use in the app."
+                        title: String(localized: "Add Vela as a key"),
+                        detail: String(localized: "Your car adds Vela as a phone key. Vela uses it to show driving and charging info, and for the controls you use in the app.")
                     )
                     .padding(.top, 28)
                     Hairline().padding(.top, 32)
-                    checkRow("Works without internet")
-                    checkRow("Remove it anytime in your car's Locks menu")
+                    checkRow(String(localized: "Works without internet"))
+                    checkRow(String(localized: "Remove it anytime in your car's Locks menu"))
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
-            PrimaryButton(title: "Continue") { model.startPairing(identity) }
+            PrimaryButton(title: String(localized: "Continue")) { model.startPairing(identity) }
                 .padding(.top, 12)
         }
     }
@@ -479,7 +479,7 @@ struct ConfirmInCarScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("Cancel") { model.cancelPairing() }
+                Button(String(localized: "Cancel")) { model.cancelPairing() }
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.text)
                     .frame(height: 44)
@@ -488,17 +488,17 @@ struct ConfirmInCarScreen: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 0) {
                     CarIllustration().padding(.top, 28)
-                    SetupTitle(title: "Confirm in your car").padding(.top, 32)
+                    SetupTitle(title: String(localized: "Confirm in your car")).padding(.top, 32)
                     VStack(alignment: .leading, spacing: 18) {
-                        stepRow(1, "Sit in the car with the touchscreen awake.")
-                        stepRow(2, "Tap your key card on the card reader.")
-                        stepRow(3, "Tap Confirm on the touchscreen.")
+                        stepRow(1, String(localized: "Sit in the car with the touchscreen awake."))
+                        stepRow(2, String(localized: "Tap your key card on the card reader."))
+                        stepRow(3, String(localized: "Tap Confirm on the touchscreen."))
                     }
                     .padding(.top, 24)
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
-            StatusLine(text: model.pairing.phase == .waitingForApproval ? "Waiting for your car" : "Connecting to your car")
+            StatusLine(text: model.pairing.phase == .waitingForApproval ? String(localized: "Waiting for your car") : String(localized: "Connecting to your car"))
         }
         .onChange(of: model.pairing.phase) { _, phase in
             if phase == .paired { model.pairingSucceeded(identity) }
@@ -531,7 +531,7 @@ struct PairFailedScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("Cancel") { model.cancelPairing() }
+                Button(String(localized: "Cancel")) { model.cancelPairing() }
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.text)
                     .frame(height: 44)
@@ -545,8 +545,8 @@ struct PairFailedScreen: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             VStack(spacing: 8) {
-                PrimaryButton(title: "Try again") { model.pairing.start(identity) }
-                Button("Check the VIN") { model.recheckVIN() }
+                PrimaryButton(title: String(localized: "Try again")) { model.pairing.start(identity) }
+                Button(String(localized: "Check the VIN")) { model.recheckVIN() }
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.text)
                     .frame(maxWidth: .infinity, minHeight: 52)
@@ -568,11 +568,11 @@ struct PairedScreen: View {
                     .frame(width: 88, height: 88)
                     .background(Circle().fill(palette.text))
                     .padding(.bottom, 12)
-                Text("You're all set")
+                Text(String(localized: "You're all set"))
                     .font(.system(size: 32, weight: .semibold))
                     .tracking(-0.64)
                     .foregroundStyle(palette.text)
-                Text("\(identity.modelName) is paired. From now on, Vela connects on its own when you get in.")
+                Text(String(localized: "\(identity.modelName) is paired. From now on, Vela connects on its own when you get in."))
                     .font(.system(size: 17))
                     .foregroundStyle(palette.text2)
                     .multilineTextAlignment(.center)
@@ -580,7 +580,7 @@ struct PairedScreen: View {
             }
             .padding(.bottom, 40)
             .frame(maxHeight: .infinity)
-            PrimaryButton(title: "Open dashboard") { model.openDashboard() }
+            PrimaryButton(title: String(localized: "Open dashboard")) { model.openDashboard() }
         }
     }
 }

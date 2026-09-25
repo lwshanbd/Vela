@@ -1,0 +1,2 @@
+/* 系统蓝牙权限提示。 */
+"NSBluetoothAlwaysUsageDescription" = "Vela 通过蓝牙连接你的 Tesla，以显示车速、挡位和电量，并控制空调和音乐。";

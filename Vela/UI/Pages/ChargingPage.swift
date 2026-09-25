@@ -35,10 +35,10 @@ struct ChargingPage: View {
 
     private var header: some View {
         HStack(spacing: 14) {
-            CircleNavButton(glyph: .chevronDown, label: "Back to dashboard", action: model.closePage)
+            CircleNavButton(glyph: .chevronDown, label: String(localized: "Back to dashboard"), action: model.closePage)
             HStack(spacing: 6) {
                 Icon(.bolt, size: 14)
-                Text(charge?.isFastCharger == true ? "SUPERCHARGING" : "CHARGING")
+                Text(charge?.isFastCharger == true ? String(localized: "SUPERCHARGING") : String(localized: "CHARGING"))
                     .font(.system(size: 13, weight: .semibold))
                     .tracking(13 * 0.12)
             }
@@ -81,14 +81,14 @@ struct ChargingPage: View {
             .frame(height: 34)
             .padding(.top, 28)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(level ?? 0) percent, limit \(limit ?? 0) percent")
+            .accessibilityLabel(String(localized: "\(level ?? 0) percent, limit \(limit ?? 0) percent"))
             if let minutes = charge?.minutesToLimit ?? charge?.minutesToFull, minutes > 0 {
-                Text("\(model.minutesLabel(Double(minutes))) to \(limit.map { "\($0)%" } ?? "full")")
+                Text(limit.map { String(localized: "\(model.minutesLabel(Double(minutes))) to \($0)%") } ?? String(localized: "\(model.minutesLabel(Double(minutes))) until fully charged"))
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(palette.text)
                     .padding(.top, 20)
             } else if charge?.status == .complete {
-                Text("Charging complete")
+                Text(String(localized: "Charging complete"))
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(palette.text)
                     .padding(.top, 20)
@@ -106,7 +106,7 @@ struct ChargingPage: View {
                 withAnimation(.easeOut(duration: 0.2)) { showsDetails.toggle() }
             } label: {
                 HStack {
-                    Text("Details").font(.system(size: 15, weight: .semibold))
+                    Text(String(localized: "Details")).font(.system(size: 15, weight: .semibold))
                     Spacer()
                     Icon(.chevronDown, size: 18).rotationEffect(.degrees(showsDetails ? 180 : 0))
                 }
@@ -117,13 +117,13 @@ struct ChargingPage: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityValue(showsDetails ? "Expanded" : "Collapsed")
+            .accessibilityValue(showsDetails ? String(localized: "Expanded") : String(localized: "Collapsed"))
             if showsDetails {
                 LazyVGrid(columns: [GridItem(.flexible(), alignment: .leading), GridItem(.flexible(), alignment: .leading)], spacing: 12) {
-                    stat("Voltage", charge?.voltage.map { "\($0) V" })
-                    stat("Current", charge?.currentAmps.map { "\($0) A" })
-                    stat("Added", charge?.energyAddedKWh.map { String(format: "%.1f kWh", $0) })
-                    stat("To full", charge?.minutesToFull.map { model.minutesLabel(Double($0)) })
+                    stat(String(localized: "Voltage"), charge?.voltage.map { "\($0) V" })
+                    stat(String(localized: "Current"), charge?.currentAmps.map { "\($0) A" })
+                    stat(String(localized: "Added"), charge?.energyAddedKWh.map { String(format: "%.1f kWh", locale: Locale.current, $0) })
+                    stat(String(localized: "To full"), charge?.minutesToFull.map { model.minutesLabel(Double($0)) })
                 }
                 .transition(.opacity)
             }

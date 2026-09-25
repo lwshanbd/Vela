@@ -19,34 +19,34 @@ struct DashboardSettingsPage: View {
 
     var body: some View {
         PageScaffold(layout: layout) {
-            PageHeader(title: "DASHBOARD", backGlyph: .chevronLeft, backLabel: "Back to settings", onBack: onBack)
+            PageHeader(title: String(localized: "DASHBOARD"), backGlyph: .chevronLeft, backLabel: String(localized: "Back to settings"), onBack: onBack)
         } content: {
             VStack(alignment: .leading, spacing: 0) {
-                Segmented(options: [(false, "Portrait"), (true, "Landscape")], selection: landscapeTab,
-                          accessibilityLabel: "Orientation") { landscapeTab = $0 }
+                Segmented(options: [(false, String(localized: "Portrait")), (true, String(localized: "Landscape"))], selection: landscapeTab,
+                          accessibilityLabel: String(localized: "Orientation")) { landscapeTab = $0 }
                     .padding(.top, 20)
                 VStack(spacing: 12) {
                     preview
                     HStack(spacing: 6) {
-                        modePill("Driving", selected: !previewParked) { previewParked = false }
-                        modePill("Parked", selected: previewParked) { previewParked = true }
+                        modePill(String(localized: "Driving"), selected: !previewParked) { previewParked = false }
+                        modePill(String(localized: "Parked"), selected: previewParked) { previewParked = true }
                     }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 20)
 
-                TrackedLabel(text: "MODULES · TOP TO BOTTOM").padding(.top, 28)
+                TrackedLabel(text: String(localized: "MODULES · TOP TO BOTTOM")).padding(.top, 28)
                 Hairline().padding(.top, 10)
                 moduleList
 
-                TrackedLabel(text: "ALERTS").padding(.top, 28)
+                TrackedLabel(text: String(localized: "ALERTS")).padding(.top, 28)
                 Hairline().padding(.top, 10)
                 ForEach(DashboardAlert.allCases, id: \.self) { alert in
                     SwitchRow(title: alert.title, subtitle: alert.subtitle, isOn: model.settings.dashboard.alertOn(alert), height: 64) {
                         model.settings.dashboard.alerts[alert] = !model.settings.dashboard.alertOn(alert)
                     }
                 }
-                Text("Modules lower in the list wait when there is no room.")
+                Text(String(localized: "Modules lower in the list wait when there is no room."))
                     .font(.system(size: 13))
                     .foregroundStyle(palette.text2)
                     .padding(.top, 16)
@@ -71,7 +71,7 @@ struct DashboardSettingsPage: View {
             .clipShape(RoundedRectangle(cornerRadius: landscapeTab ? 22 : 28, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: landscapeTab ? 22 : 28, style: .continuous).strokeBorder(palette.line, lineWidth: 1))
             .allowsHitTesting(false)
-            .accessibilityLabel("Preview")
+            .accessibilityLabel(String(localized: "Preview"))
     }
 
     private func modePill(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
@@ -173,7 +173,7 @@ struct DashboardSettingsPage: View {
                             }
                         }
                 )
-                .accessibilityLabel("Reorder \(entry.module.title)")
+                .accessibilityLabel(String(localized: "Reorder \(entry.module.title)"))
                 .accessibilityAdjustableAction { direction in
                     let target = direction == .increment ? min(index + 1, count - 1) : max(index - 1, 0)
                     var reordered = entries
@@ -184,7 +184,7 @@ struct DashboardSettingsPage: View {
                 HStack(spacing: 8) {
                     Text(entry.module.title).font(.system(size: 17)).foregroundStyle(palette.text)
                     if noRoom {
-                        Text("No room")
+                        Text(String(localized: "No room"))
                             .font(.system(size: 11, weight: .semibold))
                             .tracking(0.44)
                             .foregroundStyle(palette.text2)

@@ -178,7 +178,7 @@ final class AppModel {
 
     var gear: Gear? { readings.drive?.gear }
     var batteryLevel: Int? { readings.charge?.batteryLevel }
-    var unitLabel: String { settings.units == .mph ? "MPH" : "KM/H" }
+    var unitLabel: String { settings.units == .mph ? String(localized: "MPH") : String(localized: "KM/H") }
     var powerKW: Int? { readings.drive?.powerKW }
 
     /// Settings only when parked or not live.
@@ -186,8 +186,8 @@ final class AppModel {
 
     func distanceLabel(miles: Double) -> String {
         switch settings.units {
-        case .mph: "\(Int(miles.rounded())) mi"
-        case .kmh: "\(Int((miles * 1.609344).rounded())) km"
+        case .mph: String(localized: "\(Int(miles.rounded())) mi")
+        case .kmh: String(localized: "\(Int((miles * 1.609344).rounded())) km")
         }
     }
 
@@ -202,7 +202,7 @@ final class AppModel {
 
     var headingLabel: String? {
         guard let degrees = headingDegrees else { return nil }
-        let names = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+        let names = [String(localized: "N"), String(localized: "NE"), String(localized: "E"), String(localized: "SE"), String(localized: "S"), String(localized: "SW"), String(localized: "W"), String(localized: "NW")]
         let index = Int(((degrees.truncatingRemainder(dividingBy: 360) + 360 + 22.5) / 45).rounded(.down)) % 8
         return names[index]
     }
@@ -217,7 +217,7 @@ final class AppModel {
 
     func minutesLabel(_ minutes: Double) -> String {
         let total = Int(minutes.rounded())
-        return total >= 60 ? "\(total / 60) h \(total % 60) min" : "\(total) min"
+        return total >= 60 ? String(localized: "\(total / 60) h \(total % 60) min") : String(localized: "\(total) min")
     }
 
     // MARK: - Alerts and vehicle status
@@ -236,9 +236,9 @@ final class AppModel {
     /// The one alert shown in the driving header, most important first.
     var drivingAlert: (icon: VelaGlyph, label: String)? {
         guard isLive, !isParked else { return nil }
-        if !tireWarnings.isEmpty { return (.tire, "Tire pressure") }
+        if !tireWarnings.isEmpty { return (.tire, String(localized: "Tire pressure")) }
         if let part = Self.alertOrder.first(where: openParts.contains) {
-            return (.door, "\(Self.name(of: part)) open")
+            return (.door, String(localized: "\(Self.name(of: part)) open"))
         }
         return nil
     }
@@ -250,33 +250,33 @@ final class AppModel {
 
     static func name(of part: ClosuresReading.Part) -> String {
         switch part {
-        case .frontLeftDoor: "Front left door"
-        case .frontRightDoor: "Front right door"
-        case .rearLeftDoor: "Rear left door"
-        case .rearRightDoor: "Rear right door"
-        case .frunk: "Front trunk"
-        case .trunk: "Trunk"
-        case .frontLeftWindow: "Front left window"
-        case .frontRightWindow: "Front right window"
-        case .rearLeftWindow: "Rear left window"
-        case .rearRightWindow: "Rear right window"
-        case .sunroof: "Sunroof"
+        case .frontLeftDoor: String(localized: "Front left door")
+        case .frontRightDoor: String(localized: "Front right door")
+        case .rearLeftDoor: String(localized: "Rear left door")
+        case .rearRightDoor: String(localized: "Rear right door")
+        case .frunk: String(localized: "Front trunk")
+        case .trunk: String(localized: "Trunk")
+        case .frontLeftWindow: String(localized: "Front left window")
+        case .frontRightWindow: String(localized: "Front right window")
+        case .rearLeftWindow: String(localized: "Rear left window")
+        case .rearRightWindow: String(localized: "Rear right window")
+        case .sunroof: String(localized: "Sunroof")
         }
     }
 
     static func name(of tire: TireReading.Position) -> String {
         switch tire {
-        case .frontLeft: "Front left"
-        case .frontRight: "Front right"
-        case .rearLeft: "Rear left"
-        case .rearRight: "Rear right"
+        case .frontLeft: String(localized: "Front left")
+        case .frontRight: String(localized: "Front right")
+        case .rearLeft: String(localized: "Rear left")
+        case .rearRight: String(localized: "Rear right")
         }
     }
 
     /// Everything that needs attention, for the Vehicle page.
     var issues: [(glyph: VelaGlyph, text: String)] {
         let tireIssues = TireReading.Position.allCases.filter(tireWarnings.contains).map {
-            (VelaGlyph.tire, "\(Self.name(of: $0)) tire low")
+            (VelaGlyph.tire, String(localized: "\(Self.name(of: $0)) tire low"))
         }
         let openIssues = Self.alertOrder.filter(openParts.contains).map { part -> (VelaGlyph, String) in
             let glyph: VelaGlyph = switch part {
@@ -286,7 +286,7 @@ final class AppModel {
             case .sunroof: .sunroof
             default: .door
             }
-            return (glyph, "\(Self.name(of: part)) open")
+            return (glyph, String(localized: "\(Self.name(of: part)) open"))
         }
         return tireIssues + openIssues
     }
@@ -386,7 +386,7 @@ final class AppModel {
             return "\(Int((celsius * 9 / 5 + 32).rounded()))°"
         case .kmh:
             let half = (celsius * 2).rounded() / 2
-            return half == half.rounded() ? "\(Int(half))°" : String(format: "%.1f°", half)
+            return half == half.rounded() ? "\(Int(half))°" : String(format: "%.1f°", locale: Locale.current, half)
         }
     }
 

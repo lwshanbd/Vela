@@ -16,7 +16,14 @@ enum SpeedTint: String, CaseIterable, Sendable {
     case pure, graphite, sand, sage, ice, lilac
 
     var displayName: String {
-        rawValue.prefix(1).uppercased() + rawValue.dropFirst()
+        switch self {
+        case .pure: String(localized: "Pure")
+        case .graphite: String(localized: "Graphite")
+        case .sand: String(localized: "Sand")
+        case .sage: String(localized: "Sage")
+        case .ice: String(localized: "Ice")
+        case .lilac: String(localized: "Lilac")
+        }
     }
 }
 
@@ -28,10 +35,10 @@ enum SpeedGround: String, CaseIterable, Sendable {
 
     func displayName(dark: Bool) -> String {
         switch (self, dark) {
-        case (.pure, true): "Black"
-        case (.pure, false): "White"
-        case (.soft, true): "Graphite"
-        case (.soft, false): "Paper"
+        case (.pure, true): String(localized: "Black")
+        case (.pure, false): String(localized: "White")
+        case (.soft, true): String(localized: "Graphite")
+        case (.soft, false): String(localized: "Paper")
         }
     }
 }
