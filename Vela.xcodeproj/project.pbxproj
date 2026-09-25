@@ -1,0 +1,533 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1BFCB4677EC694D67CA4CB8C /* PairingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB258B73E2DD658C025954B5 /* PairingSession.swift */; };
+		2175EC6D56D5948B46326417 /* VehicleIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */; };
+		455D1646A51CE26711067292 /* ClimatePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0A08CA58321A3142A79D46 /* ClimatePage.swift */; };
+		5370500FBBBBF6F5B6A08FFA /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9923C8F1F378EC06689ABC /* Palette.swift */; };
+		5BB9F41FDE29DB574E4BB4DF /* Instrument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08201897872296503AF30759 /* Instrument.swift */; };
+		5EBC49F180770FA865B99377 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1983846979F11C4ABE92845F /* AppModel.swift */; };
+		6BE642BFF9CD292A9BF81C6B /* DeckModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F012C21A8C7FDA7CF0958B /* DeckModules.swift */; };
+		72CB8F92DDA7BD6155071AD1 /* VelaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789862BF13686674B5EB72A3 /* VelaApp.swift */; };
+		7F41A66194EA27D01FA3B303 /* PreviewFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */; };
+		8C2779EF504A0DF827C8A188 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889789B4CB0B1416E0F56C64 /* AppSettings.swift */; };
+		9794F737CE3CD7BE3C8DD094 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2DBFF7399388653ADB7FDF /* DashboardView.swift */; };
+		9B5F8672A8268DE413203742 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C19C1E68CFF33E627BF0E87 /* Controls.swift */; };
+		A49DC436EBEFAE62ADE78CF3 /* NearbyTeslaScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8E79671B9DE60AC7E48ACD /* NearbyTeslaScanner.swift */; };
+		A591830F448954367B34CF1B /* TeslaBLE in Frameworks */ = {isa = PBXBuildFile; productRef = 1239C53A68D5BC313A88ECD3 /* TeslaBLE */; };
+		A7298AEC6ED1A1B1D29DF9F1 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12083155D90CF05C1A08657 /* SettingsPage.swift */; };
+		ADDED676EA35C7FCCE8C8906 /* VehicleConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D905DC0B858847274F4ED1F /* VehicleConnection.swift */; };
+		B4408C666102010EA033EF6C /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75DC15B7E8836F9EB4120D /* OnboardingView.swift */; };
+		B5256DA5DCE4B4DE4D605B2F /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A3D3271BEED9CB5B0AAFF0 /* Icons.swift */; };
+		D50991309936D0336F8A92AC /* VehicleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C257AC3A614B7868B240C2 /* VehicleState.swift */; };
+		E705426B6AF7E89E832198B9 /* SpeedDisplayPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136DF1A0B637A65231CDAF8B /* SpeedDisplayPage.swift */; };
+		E8AEDC43091FE5D4FBAEDCFE /* MusicPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9990F0C9D7C415D7C7575A /* MusicPage.swift */; };
+		EF22D988389224DBB8937340 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06C3337ACED2B2DC57D7FF2B /* Assets.xcassets */; };
+		FC3A5D2DD482FEB7857F4573 /* PageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CD44BF7C4394366DD16C0C /* PageContainer.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		06C3337ACED2B2DC57D7FF2B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		08201897872296503AF30759 /* Instrument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instrument.swift; sourceTree = "<group>"; };
+		0F8E79671B9DE60AC7E48ACD /* NearbyTeslaScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTeslaScanner.swift; sourceTree = "<group>"; };
+		136DF1A0B637A65231CDAF8B /* SpeedDisplayPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedDisplayPage.swift; sourceTree = "<group>"; };
+		1983846979F11C4ABE92845F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		20C257AC3A614B7868B240C2 /* VehicleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleState.swift; sourceTree = "<group>"; };
+		25CD44BF7C4394366DD16C0C /* PageContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContainer.swift; sourceTree = "<group>"; };
+		27F012C21A8C7FDA7CF0958B /* DeckModules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckModules.swift; sourceTree = "<group>"; };
+		3D905DC0B858847274F4ED1F /* VehicleConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleConnection.swift; sourceTree = "<group>"; };
+		4D9923C8F1F378EC06689ABC /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFixtures.swift; sourceTree = "<group>"; };
+		5C19C1E68CFF33E627BF0E87 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		789862BF13686674B5EB72A3 /* VelaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VelaApp.swift; sourceTree = "<group>"; };
+		7F0A08CA58321A3142A79D46 /* ClimatePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimatePage.swift; sourceTree = "<group>"; };
+		804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleIdentity.swift; sourceTree = "<group>"; };
+		889789B4CB0B1416E0F56C64 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		AA75DC15B7E8836F9EB4120D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		B12083155D90CF05C1A08657 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
+		DB258B73E2DD658C025954B5 /* PairingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingSession.swift; sourceTree = "<group>"; };
+		DB48061975AD87F58267ABB3 /* Vela.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Vela.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3A3D3271BEED9CB5B0AAFF0 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
+		FC2DBFF7399388653ADB7FDF /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		FC9990F0C9D7C415D7C7575A /* MusicPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPage.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		99A162DEA9F9BBFB648466BA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A591830F448954367B34CF1B /* TeslaBLE in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		483BF04F79F6240146C6B63F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB48061975AD87F58267ABB3 /* Vela.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		76FBB74658D664F4F3F40A89 /* Vela */ = {
+			isa = PBXGroup;
+			children = (
+				DD8CAB57B512C6311633A8CD /* App */,
+				ED8FAF764656786DB34F7DB4 /* Preview */,
+				DE70DEAC71713F95D9C3A38A /* Resources */,
+				C0E1A65E4B7FB79B930CC342 /* State */,
+				8AF897F85F5A2246C917F599 /* UI */,
+				F4C76DD89343D182304DB483 /* Vehicle */,
+			);
+			path = Vela;
+			sourceTree = "<group>";
+		};
+		7E6E74E4A2E2B804EB939B59 /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				7F0A08CA58321A3142A79D46 /* ClimatePage.swift */,
+				FC9990F0C9D7C415D7C7575A /* MusicPage.swift */,
+				25CD44BF7C4394366DD16C0C /* PageContainer.swift */,
+				B12083155D90CF05C1A08657 /* SettingsPage.swift */,
+				136DF1A0B637A65231CDAF8B /* SpeedDisplayPage.swift */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		85D5567D1B4773BE44F503BB /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				5C19C1E68CFF33E627BF0E87 /* Controls.swift */,
+				F3A3D3271BEED9CB5B0AAFF0 /* Icons.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		8AF897F85F5A2246C917F599 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				85D5567D1B4773BE44F503BB /* Components */,
+				998B5831E71F461AD4ADAAE4 /* Dashboard */,
+				BAD9459C926B5943188417B9 /* Onboarding */,
+				7E6E74E4A2E2B804EB939B59 /* Pages */,
+				DC69CED3512A0B1B241582B1 /* Theme */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		8D8AC28433B2AC935501E5A2 = {
+			isa = PBXGroup;
+			children = (
+				76FBB74658D664F4F3F40A89 /* Vela */,
+				483BF04F79F6240146C6B63F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		998B5831E71F461AD4ADAAE4 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				FC2DBFF7399388653ADB7FDF /* DashboardView.swift */,
+				27F012C21A8C7FDA7CF0958B /* DeckModules.swift */,
+				08201897872296503AF30759 /* Instrument.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		BAD9459C926B5943188417B9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				AA75DC15B7E8836F9EB4120D /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		C0E1A65E4B7FB79B930CC342 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				1983846979F11C4ABE92845F /* AppModel.swift */,
+				889789B4CB0B1416E0F56C64 /* AppSettings.swift */,
+				20C257AC3A614B7868B240C2 /* VehicleState.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		DC69CED3512A0B1B241582B1 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				4D9923C8F1F378EC06689ABC /* Palette.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		DD8CAB57B512C6311633A8CD /* App */ = {
+			isa = PBXGroup;
+			children = (
+				789862BF13686674B5EB72A3 /* VelaApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DE70DEAC71713F95D9C3A38A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				06C3337ACED2B2DC57D7FF2B /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		ED8FAF764656786DB34F7DB4 /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+				59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */,
+			);
+			path = Preview;
+			sourceTree = "<group>";
+		};
+		F4C76DD89343D182304DB483 /* Vehicle */ = {
+			isa = PBXGroup;
+			children = (
+				0F8E79671B9DE60AC7E48ACD /* NearbyTeslaScanner.swift */,
+				DB258B73E2DD658C025954B5 /* PairingSession.swift */,
+				3D905DC0B858847274F4ED1F /* VehicleConnection.swift */,
+				804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */,
+			);
+			path = Vehicle;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		887543FE98EDDB51C0D26FB2 /* Vela */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E36DFB38ED9B78C5432D865 /* Build configuration list for PBXNativeTarget "Vela" */;
+			buildPhases = (
+				41EE8B5767B0C17BE620D5EB /* Sources */,
+				D2CBC3C0A47F2DDAC075D2B2 /* Resources */,
+				99A162DEA9F9BBFB648466BA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Vela;
+			packageProductDependencies = (
+				1239C53A68D5BC313A88ECD3 /* TeslaBLE */,
+			);
+			productName = Vela;
+			productReference = DB48061975AD87F58267ABB3 /* Vela.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7FD476A6B78E6892F5E407ED /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					887543FE98EDDB51C0D26FB2 = {
+						DevelopmentTeam = S4BS47942Q;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 070106BC6C9C9A3557F945E6 /* Build configuration list for PBXProject "Vela" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8D8AC28433B2AC935501E5A2;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				489FD93442BBF977525441D1 /* XCRemoteSwiftPackageReference "swift-tesla-ble" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 483BF04F79F6240146C6B63F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				887543FE98EDDB51C0D26FB2 /* Vela */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D2CBC3C0A47F2DDAC075D2B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EF22D988389224DBB8937340 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		41EE8B5767B0C17BE620D5EB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EBC49F180770FA865B99377 /* AppModel.swift in Sources */,
+				8C2779EF504A0DF827C8A188 /* AppSettings.swift in Sources */,
+				455D1646A51CE26711067292 /* ClimatePage.swift in Sources */,
+				9B5F8672A8268DE413203742 /* Controls.swift in Sources */,
+				9794F737CE3CD7BE3C8DD094 /* DashboardView.swift in Sources */,
+				6BE642BFF9CD292A9BF81C6B /* DeckModules.swift in Sources */,
+				B5256DA5DCE4B4DE4D605B2F /* Icons.swift in Sources */,
+				5BB9F41FDE29DB574E4BB4DF /* Instrument.swift in Sources */,
+				E8AEDC43091FE5D4FBAEDCFE /* MusicPage.swift in Sources */,
+				A49DC436EBEFAE62ADE78CF3 /* NearbyTeslaScanner.swift in Sources */,
+				B4408C666102010EA033EF6C /* OnboardingView.swift in Sources */,
+				FC3A5D2DD482FEB7857F4573 /* PageContainer.swift in Sources */,
+				1BFCB4677EC694D67CA4CB8C /* PairingSession.swift in Sources */,
+				5370500FBBBBF6F5B6A08FFA /* Palette.swift in Sources */,
+				7F41A66194EA27D01FA3B303 /* PreviewFixtures.swift in Sources */,
+				A7298AEC6ED1A1B1D29DF9F1 /* SettingsPage.swift in Sources */,
+				E705426B6AF7E89E832198B9 /* SpeedDisplayPage.swift in Sources */,
+				ADDED676EA35C7FCCE8C8906 /* VehicleConnection.swift in Sources */,
+				2175EC6D56D5948B46326417 /* VehicleIdentity.swift in Sources */,
+				D50991309936D0336F8A92AC /* VehicleState.swift in Sources */,
+				72CB8F92DDA7BD6155071AD1 /* VelaApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1CEE218FF8A747D74AC0ED38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Vela;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Vela connects to your Tesla over Bluetooth to show speed, gear and battery, and to control climate and music.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beadinventory.vela;
+				PRODUCT_NAME = Vela;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		476CFC287C549CE5B64C8F41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S4BS47942Q;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		D79908D40D80D98CCA71B49C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S4BS47942Q;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		D7AB7837F21C8FEF021F50B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Vela;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Vela connects to your Tesla over Bluetooth to show speed, gear and battery, and to control climate and music.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beadinventory.vela;
+				PRODUCT_NAME = Vela;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		070106BC6C9C9A3557F945E6 /* Build configuration list for PBXProject "Vela" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				476CFC287C549CE5B64C8F41 /* Debug */,
+				D79908D40D80D98CCA71B49C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6E36DFB38ED9B78C5432D865 /* Build configuration list for PBXNativeTarget "Vela" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7AB7837F21C8FEF021F50B9 /* Debug */,
+				1CEE218FF8A747D74AC0ED38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		489FD93442BBF977525441D1 /* XCRemoteSwiftPackageReference "swift-tesla-ble" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lwshanbd/swift-tesla-ble";
+			requirement = {
+				kind = revision;
+				revision = d07fcac24064252f0a8f19e7484431f4a8975275;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1239C53A68D5BC313A88ECD3 /* TeslaBLE */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 489FD93442BBF977525441D1 /* XCRemoteSwiftPackageReference "swift-tesla-ble" */;
+			productName = TeslaBLE;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 7FD476A6B78E6892F5E407ED /* Project object */;
+}

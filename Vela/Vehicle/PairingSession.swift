@@ -1,0 +1,116 @@
+import Foundation
+import Observation
+import OSLog
+import TeslaBLE
+
+/// First-time pairing, following swift-tesla-ble's documented flow and
+/// Tesla's vehicle-command `add-key-request`:
+///
+/// 1. Load or create this phone's P-256 key for the VIN (Keychain).
+/// 2. Connect in `.pairing` mode (BLE only, no session).
+/// 3. Send the unsigned VCSEC `addKey` whitelist request.
+/// 4. The driver taps their key card and confirms on the touchscreen.
+/// 5. Retry a normal signed handshake until the car accepts the new key.
+@MainActor
+@Observable
+final class PairingSession {
+    enum Phase: Equatable {
+        case idle
+        /// Scanning for and connecting to the car.
+        case findingCar
+        /// addKey sent; waiting for the owner to approve in the car.
+        case waitingForApproval
+        case paired
+        case failed(String)
+    }
+
+    private(set) var phase: Phase = .idle
+    private let store: VehicleIdentityStore
+    private var task: Task<Void, Never>?
+    private let bleLogger = OSLogTeslaBLELogger(subsystem: "com.beadinventory.vela")
+    private let log = Logger(subsystem: "com.beadinventory.vela", category: "pairing")
+
+    /// How long to wait for the owner to approve on the touchscreen.
+    private static let approvalWindow: Duration = .seconds(180)
+
+    init(store: VehicleIdentityStore) {
+        self.store = store
+    }
+
+    func start(_ identity: VehicleIdentity) {
+        cancel()
+        phase = .findingCar
+        task = Task { [weak self] in
+            await self?.run(identity)
+        }
+    }
+
+    func cancel() {
+        task?.cancel()
+        task = nil
+        phase = .idle
+    }
+
+    private func run(_ identity: VehicleIdentity) async {
+        do {
+            let key = try store.loadOrCreateKey(for: identity.vin)
+            let publicKey = KeyPairFactory.publicKeyBytes(of: key)
+
+            let pairingClient = TeslaVehicleClient(vin: identity.vin, keyStore: store.keyStore, logger: bleLogger)
+            do {
+                try await pairingClient.connect(mode: .pairing, timeout: .seconds(30))
+                try await pairingClient.send(
+                    .security(.addKey(publicKey: publicKey, role: .owner, formFactor: .iosDevice))
+                )
+            } catch {
+                await pairingClient.disconnect()
+                throw error
+            }
+            await pairingClient.disconnect()
+            guard !Task.isCancelled else { return }
+            phase = .waitingForApproval
+
+            // The key becomes usable once the owner approves. Until then the
+            // signed handshake fails; keep trying inside the approval window.
+            let clock = ContinuousClock()
+            let deadline = clock.now + Self.approvalWindow
+            while clock.now < deadline {
+                try await Task.sleep(for: .seconds(3))
+                let probe = TeslaVehicleClient(vin: identity.vin, keyStore: store.keyStore, logger: bleLogger)
+                do {
+                    try await probe.connect(mode: .normal, timeout: .seconds(15))
+                    await probe.disconnect()
+                    store.markPaired(identity)
+                    phase = .paired
+                    return
+                } catch {
+                    await probe.disconnect()
+                    if Task.isCancelled { return }
+                    log.notice("waiting for approval: \(String(describing: error), privacy: .public)")
+                }
+            }
+            phase = .failed("The car didn't confirm in time. Tap your key card, then Confirm on the touchscreen.")
+        } catch is CancellationError {
+            return
+        } catch {
+            guard !Task.isCancelled else { return }
+            log.error("pairing failed: \(String(describing: error), privacy: .public)")
+            phase = .failed(Self.message(for: error))
+        }
+    }
+
+    private static func message(for error: Error) -> String {
+        switch error as? TeslaBLEError {
+        case .bluetoothUnavailable:
+            "Bluetooth is off or not allowed for Vela."
+        case .scanTimeout:
+            "Couldn't find the car. Stay close to it and check the VIN."
+        case .addKeyFailed, .connectionFailed, .serviceNotFound, .characteristicsNotFound:
+            "The car didn't accept the request. Try again from inside the car."
+        case .keychain:
+            "Couldn't save the key on this iPhone."
+        default:
+            "Something went wrong. Try again."
+        }
+    }
+}
