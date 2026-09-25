@@ -23,74 +23,83 @@ xcodegen generate
 Vela/
   App/         入口。AppModel 挂在 App 上，不挂在任何 View 上
   Vehicle/     Tesla BLE 层，只有这里 import TeslaBLE
-    VehicleConnection   连接、握手、轮询、断线重连、发命令
+    VehicleConnection   连接、握手、轮询、断线重连、睡眠识别、发命令、查超充站
     PairingSession      首次配对：addKey，然后等车主在车上确认
     NearbyTeslaScanner  设置流程里列出附近的 Tesla
     VehicleIdentity     VIN、车型名、Keychain 私钥
-  State/       AppModel、AppSettings、VehicleState
+  State/       AppModel、AppSettings、DashboardConfig、VehicleState、NetworkMonitor
                把车辆数据转成界面要显示的值，把用户操作转成命令
-  UI/          只读 AppModel，只发用户意图
-    Dashboard/   竖屏、横屏两套布局，共用 Instrument 和各个模块
-    Pages/       Now Playing、Climate、Settings、Speed display
-    Onboarding/  欢迎、搜索、选车、输入 VIN、配对
-  Preview/     SwiftUI Preview 用的假数据，只在 DEBUG 编译
+  UI/
+    Components/  图标（直接解析设计稿的 SVG 路径）、按钮、开关、分段控件
+    Dashboard/   DashboardLayout 按屏幕尺寸选布局，模块按列表顺序排，放不下就不放
+    Pages/       Now Playing、Climate、Controls、Superchargers、Vehicle、Charging、
+                 Settings（含 Dashboard 模块设置、Speed display）
+    Onboarding/  欢迎、搜索、选车、输入 VIN、配对、配对失败
+  Preview/     SwiftUI Preview 和 DEBUG 启动参数用的假数据，只在 DEBUG 编译
 ```
+
+## 仪表盘
+
+- 行驶中和停车时（P 档且车速为 0）是两种布局。停车时车速变小，多出车辆面板（锁、开着的门窗、胎压、软件更新），以及 Controls 和 Chargers 两个入口。
+- 可选模块：功率、续航、车内外温度、朝向、导航、地图、空调、媒体。竖屏和横屏各有一份顺序和开关，在 Settings › Dashboard 里改。
+- 按列表顺序往下排，放不下的模块就不显示，设置页标出「No room」。
+- 车没上报的数据，对应模块直接不出现，不画空状态。
+- 布局只看屏幕尺寸：短边小于 460 pt 是 iPhone，460 到 600 pt 是 iPhone Duo 外屏，更大是 Duo 内屏。
 
 ## 数据刷新
 
-- 车速和档位用 `fetchDrive()`，这是库给的 drive-only 快速通道。请求一个接一个发，最快 4 Hz，和设计稿里「数字不闪」的上限一致。挂 P 档时降到 1 Hz。
-- 电量、空调、媒体合成一个 `fetch(.categories(...))` 请求，每 5 秒一次。Now Playing 或 Climate 页打开时改成 2 秒一次。
-- 发完命令立刻再拉一次状态，所以界面上显示的是车实际生效的值。
-- 车速不做补间。车没回车速时，挂 P 档显示 0，其他档位显示占位横条。
+- 车速、档位、功率、导航用 `fetchDrive()`。请求一个接一个发，最快 4 Hz。挂 P 档时降到 1 Hz。
+- 电量、充电、空调、媒体、车门车窗、胎压合成一个 `fetch(.categories(...))` 请求，每 5 秒一次；打开详情页时 2 秒一次。开了地图或朝向模块才请求位置，停车时才请求软件更新状态。
+- 发完命令立刻再拉一次状态，界面显示的是车实际生效的值。温度和座椅加热会先显示你点的值，等车确认。
+- 超充站只在打开 Superchargers 页或点刷新时向车查询。
 
 ## 连接生命周期
 
 - `VehicleConnection` 的生命周期跟着 App 走，旋转屏幕、View 重建都碰不到它。
 - 断线后自动重连，退避间隔 1、2、4、8、10 秒。车速连续 4 次请求失败，就当作断线处理。
-- 进后台先保持 20 秒。切出去看一眼地图再回来，连接不断。超过 20 秒就断开，免得一直把车吵醒。回到前台自动重连。
-- 屏幕常亮只在一处设置（`RootView`）。同时满足这几条才常亮：设置里打开了、App 在前台、在仪表盘上、车已连接或正在重连。
+- 握手失败时，用不需要签名的车身状态查询问一下车是不是在睡眠。是的话显示「Model Y is asleep」，继续重试，开门后就能连上。
+- 进后台先保持 20 秒，超过 20 秒就断开，免得一直把车吵醒。回到前台自动重连。
+- 屏幕常亮只在一处设置（`RootView`）：设置里打开了、App 在前台、在仪表盘上、车已连接或正在重连。
 
 ## Tesla BLE 实际能做什么
 
-对照了 swift-tesla-ble（我们的 fork）的公开 API 和 Tesla vehicle-command 的 protobuf。fork 里还能读到位置、胎压、车身、充电细节等，界面上还没用，等新设计稿。
+依赖我们 fork 的 swift-tesla-ble。它把原库丢掉的字段都接上了，并且让车身状态查询不需要签名。对照的是 Tesla vehicle-command 的 protobuf。
 
-| 功能 | 状态 |
+能读能控的：车速、档位、功率、导航、位置和朝向、电量、续航、充电、空调、座椅加热和通风、方向盘加热、除雾、保持空调模式、过热保护、生化防御、媒体（包括播放状态、音源、音量）、车门车窗天窗、锁、哨兵、胎压、软件更新、附近超充站。
+
+控制不了或读不到的：
+
+| 功能 | 原因 |
 | --- | --- |
-| 车速、档位 | 已接入，`DriveState` |
-| 电量 | 已接入，`ChargeState.batteryLevel` |
-| 空调开关 | 已接入，`.climate(.on / .off)` |
-| 主驾、副驾温度 | 已接入，`.climate(.setTemperature)` |
-| 两侧同步 | App 自己的逻辑：打开时两侧发同一个温度 |
-| 风量 | 只能读（`fanStatus`）。BLE 没有调风量、没有 Auto 的命令，所以界面上不放这两个按钮 |
-| 播放、上一首、下一首、音量 | 已接入，`.media(...)` |
-| 曲名、歌手、音量、进度 | 已接入，`MediaState` 和 `MediaDetailState` |
-| 播放还是暂停 | 已接入，fork 里的 `MediaState.playbackStatus`。车没上报时，播放键退回成播放和暂停合在一起的图标 |
-| 专辑封面 | BLE 不传，显示音符占位 |
-| FSD 状态、FSD 目标车速、道路限速 | 公开协议里没有，没有实现 |
+| 风量、风量 Auto | 只能读，BLE 没有设置命令 |
+| 关前备箱 | BLE 只能打开 |
+| 专辑封面 | BLE 不传 |
+| FSD、Autopilot、道路限速、转向提示 | 公开协议里没有 |
+| 叫醒睡着的车 | 需要完整会话，而睡着时建不起会话 |
 
 这些限制集中写在 `VehicleCapabilities`（`State/VehicleState.swift`）。
 
 ## 和设计稿不一样的地方
 
-- **多了一步「输入 VIN」。** 车的蓝牙广播名是 VIN 的哈希，反推不出 VIN，而配对和连接都要用 VIN。选车之后要输入一次 VIN。输入后会校验：这个 VIN 算出来的广播名，必须和刚才选的那辆车对得上。
-- **选车列表只显示信号远近**（很近、附近、稍远、很远）。设计稿里写的是「About 10 m away」，但蓝牙信号强度估不准距离，所以不写米数。
-- **车在睡眠时连不上。** 库的 `connect()` 会一次握手 VCSEC 和 Infotainment 两个域。车睡着时 Infotainment 不回应，整个连接就失败，也就没有机会先发唤醒命令。实际表现是：人上车、开门把车叫醒以后，Vela 下一轮重试就能连上。
+- **过热保护的触发温度**写的是 Low / Medium / High。设计稿写的是 90° / 100° / 105°，但车只报这三档，不报具体温度。
+- **前备箱开着时没有「关」按钮**，只显示状态。
+- **Dashboard 设置页的预览**用车当前的数据。还没有数据的模块显示成空面板加「–」，不填示例数字。
+- **iPhone Duo 的折叠区和外屏摄像头避让**没有做。设计稿提到的 `ArrangementView`、`ReservedRegion` 在 iOS 27 SDK 里不是公开 API。Duo 的布局按屏幕尺寸选。
+- **选车列表只显示信号强弱分档**，不写距离米数。
 
 ## 验证情况
 
-**已经 build 通过：**
-- Debug 和 Release，iPhone 17 Pro Max 模拟器
-- 真机 target，用 Team `S4BS47942Q` 自动签名
+**build：**iPhone 17 Pro Max 模拟器 Debug 通过，Vela 自己的代码没有 warning。
 
-**模拟器里看过的界面**（DEBUG 下带 `-VelaFixtures driving|parked|connecting|lost [music|climate|settings]` 启动，带 `-VelaLandscape` 转成横屏）：
-- 仪表盘：竖屏和横屏，深色和浅色，连接中，连接断开
-- Now Playing、Climate、Settings
-- 设置流程：从欢迎页一直走到「Confirm in your car」
+**模拟器里看过的界面**（DEBUG 下带 `-VelaFixtures driving|full|parked|charging|asleep|connecting|lost|btoff|noperm [music|climate|settings|controls|chargers|vehicle|charging]` 启动，`-VelaAllModules` 打开全部模块，`-VelaLandscape` 转成横屏）：
+- 仪表盘：行驶、全模块加告警、停车、睡眠；横屏行驶和停车
+- Climate、Controls、Superchargers、Vehicle、Charging、Now Playing、Settings、Dashboard 设置
+
+**还没看过：**iPhone Duo 模拟器启动后是黑屏，Duo 布局没有看到实际效果。
 
 **必须用真车真机验证的：**
-- 首次配对：addKey 发出去以后，刷卡、在中控屏上确认，最后进到「You're all set」
-- 重新打开 App 能自动连上，4 Hz 车速刷新的实际延迟
-- 空调和音乐各个命令在车上真的生效
-- 车走远、蓝牙关掉、车睡着再醒来，各种情况下的重连
-- 切到后台再回来，20 秒以内和超过 20 秒两种情况
-- 附近车辆扫描，以及 VIN 和广播名的匹配
+- 首次配对，以及之后自动重连
+- 睡眠识别：车睡着时是否显示「asleep」，开门后能否连上
+- 所有控制命令：锁、前后备箱、车窗、哨兵、天窗、充电口、车库门、鸣笛、闪灯、座椅、方向盘、除雾、保持空调、过热保护
+- 超充站查询、导航和位置数据、胎压和车门状态
+- 4 Hz 车速刷新的实际延迟

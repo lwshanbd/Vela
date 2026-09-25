@@ -21,7 +21,17 @@ final class PairingSession {
         /// addKey sent; waiting for the owner to approve in the car.
         case waitingForApproval
         case paired
-        case failed(String)
+        case failed(Failure)
+    }
+
+    struct Failure: Equatable, Sendable {
+        let title: String
+        let detail: String
+
+        static let timedOut = Failure(
+            title: "Your car didn't confirm",
+            detail: "Pairing timed out. Try again and, when the touchscreen asks, tap your key card on the card reader, then tap Confirm."
+        )
     }
 
     private(set) var phase: Phase = .idle
@@ -89,13 +99,13 @@ final class PairingSession {
                     log.notice("waiting for approval: \(String(describing: error), privacy: .public)")
                 }
             }
-            phase = .failed("The car didn't confirm in time. Tap your key card, then Confirm on the touchscreen.")
+            phase = .failed(.timedOut)
         } catch is CancellationError {
             return
         } catch {
             guard !Task.isCancelled else { return }
             log.error("pairing failed: \(String(describing: error), privacy: .public)")
-            phase = .failed(Self.message(for: error))
+            phase = .failed(Failure(title: "Couldn't reach your car", detail: Self.message(for: error)))
         }
     }
 

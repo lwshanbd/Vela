@@ -1,135 +1,160 @@
 import SwiftUI
 
-/// The driving screen. Portrait and landscape are separate compositions of
-/// the same instrument and modules, chosen by the current geometry. All state
-/// lives in `AppModel`, so switching composition never touches the session.
+/// The driving screen. Portrait and landscape (and the iPhone Duo's displays)
+/// are compositions of the same instrument and modules, chosen by the current
+/// geometry. All state lives in `AppModel`, so switching composition never
+/// touches the session.
 struct DashboardView: View {
     let model: AppModel
     @Environment(\.palette) private var palette
 
     var body: some View {
         GeometryReader { proxy in
-            let safe = proxy.safeAreaInsets
             let size = proxy.fullScreenSize
             let landscape = size.width > size.height
             ZStack {
                 palette.bg.ignoresSafeArea()
-                Group {
-                    if landscape {
-                        LandscapeDashboard(model: model, size: size, safe: safe)
-                    } else {
-                        PortraitDashboard(model: model, size: size, safe: safe)
-                    }
-                }
-                .id(landscape)
-                .transition(.opacity)
+                DashboardComposition(model: model, size: size, safe: proxy.safeAreaInsets)
+                    .id(landscape)
+                    .transition(.opacity)
             }
             .animation(.easeInOut(duration: 0.15), value: landscape)
+            .animation(.easeInOut(duration: 0.15), value: model.isParked)
             .ignoresSafeArea()
         }
     }
 }
 
-/// Deck opacity and hit-testing: dimmed and inert while not live.
-private struct DeckState: ViewModifier {
-    let live: Bool
-    func body(content: Content) -> some View {
-        content
-            .opacity(live ? 1 : 0.28)
-            .allowsHitTesting(live)
-            .animation(.easeInOut(duration: 0.2), value: live)
-    }
-}
-
-struct PortraitDashboard: View {
+/// One rendering of the dashboard at a given size. The settings preview uses
+/// it with a forced driving/parked state.
+struct DashboardComposition: View {
     let model: AppModel
     let size: CGSize
     let safe: EdgeInsets
+    var forcedParked: Bool?
+    var preview = false
 
     var body: some View {
-        // Speed = min(0.51 × width, 0.235 × height), never below 150 pt.
-        let speed = max(150, min(0.51 * size.width, 0.235 * size.height))
-        // Below 700 pt tall the deck drops to 64 pt controls and tighter gaps.
-        let compact = size.height < 700
-        let showClimate = model.hasClimate
-        let showMedia = model.hasMedia
-        VStack(spacing: 0) {
-            StatusHeader(model: model)
-            InstrumentView(model: model, metrics: .portrait(speedSize: speed))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            if showClimate || showMedia {
-                Hairline()
-                VStack(spacing: compact ? 25.5 : 34) {
-                    if showClimate {
-                        ClimateModule(
-                            model: model,
-                            buttonSize: compact ? 64 : 76, iconSize: compact ? 26 : 28,
-                            fontSize: compact ? 46 : 54, labelMinWidth: compact ? 110 : 132
-                        )
-                    }
-                    if showMedia {
-                        PortraitMediaModule(model: model, compact: compact)
-                    }
-                }
-                .padding(.top, compact ? 21 : 28)
-                .padding(.bottom, compact ? 6 : 10)
-                .modifier(DeckState(live: model.isLive))
-            }
+        let layout = DashboardLayout.make(size: size, safe: safe)
+        let context = DashContext(
+            model: model,
+            layout: layout,
+            landscape: size.width > size.height,
+            parked: forcedParked ?? model.isParked,
+            live: preview || model.isLive,
+            preview: preview
+        )
+        switch layout.arrangement {
+        case .column: ColumnDashboard(context: context, size: size)
+        case .row: RowDashboard(context: context, size: size)
         }
-        .padding(.top, max(safe.top, 20))
-        .padding(.bottom, max(safe.bottom, 16))
-        .padding(.horizontal, 24)
-        .animation(.easeInOut(duration: 0.2), value: showClimate)
-        .animation(.easeInOut(duration: 0.2), value: showMedia)
     }
 }
 
-struct LandscapeDashboard: View {
-    let model: AppModel
+/// Speed above, deck below.
+private struct ColumnDashboard: View {
+    let context: DashContext
     let size: CGSize
-    let safe: EdgeInsets
 
     var body: some View {
-        // Same inset on both sides whichever way the island faces, so nothing
-        // shifts when the phone is flipped.
-        let side = max(safe.leading, safe.trailing, 24)
-        let speed = 0.45 * size.height
-        let showClimate = model.hasClimate
-        let showMedia = model.hasMedia
-        let hasDeck = showClimate || showMedia
-        let inner = size.width - 2 * side
+        let layout = context.layout
+        let contentHeight = size.height - layout.insets.top - layout.insets.bottom
+        let instrument = DeckFit.instrumentHeight(
+            layout: layout, parked: context.parked, power: context.showsPower,
+            chips: !context.chipModules.isEmpty && context.live, parkPanel: context.showsParkPanel
+        )
+        let slots = orderedSlots(context)
+        let budget = contentHeight - 44 - instrument - 16
+        let placedSet = DeckFit.fit(slots.map { ($0, DeckFit.height(of: $0, in: layout)) }, budget: budget, gap: layout.gap)
+        let placed = slots.filter(placedSet.contains)
+        VStack(spacing: 0) {
+            StatusHeader(context: context)
+            InstrumentView(context: context)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            VStack(spacing: layout.gap) {
+                if context.showsParkPanel {
+                    ParkPanel(context: context)
+                }
+                DeckStack(context: context, slots: placed)
+            }
+            .frame(maxWidth: layout.deckMaxWidth ?? .infinity)
+            .padding(.top, 12)
+            .padding(.bottom, 4)
+        }
+        .padding(layout.insets)
+    }
+}
+
+/// Instrument on the leading side, deck on the trailing side.
+private struct RowDashboard: View {
+    let context: DashContext
+    let size: CGSize
+
+    var body: some View {
+        let layout = context.layout
+        let contentHeight = size.height - layout.insets.top - layout.insets.bottom
+        let slots = orderedSlots(context)
+        let placedSet = DeckFit.fit(slots.map { ($0, DeckFit.height(of: $0, in: layout)) }, budget: contentHeight, gap: layout.gap)
+        let placed = slots.filter(placedSet.contains)
+        let inner = size.width - layout.insets.leading - layout.insets.trailing
+        let hasDeck = !placed.isEmpty
+        let dividerWidth: CGFloat = layout.divider && hasDeck ? 1 : 0
+        let instrumentWidth = hasDeck
+            ? (inner - dividerWidth) * layout.instrumentShare / (layout.instrumentShare + 1)
+            : inner
         HStack(spacing: 0) {
             VStack(spacing: 0) {
-                StatusHeader(model: model)
-                InstrumentView(model: model, metrics: .landscape(speedSize: speed))
-                    .padding(.bottom, 24)
+                StatusHeader(context: context)
+                InstrumentView(context: context)
+                    .padding(.bottom, 8)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.trailing, hasDeck ? 28 : 0)
-            .frame(width: hasDeck ? (inner - 1) * 1.12 / 2.12 : inner)
+            .padding(.trailing, hasDeck ? layout.instrumentTrailingPad : 0)
+            .frame(width: instrumentWidth)
 
             if hasDeck {
-                Hairline(vertical: true)
-                    .padding(.top, 36)
-                    .padding(.bottom, 32)
-                VStack(spacing: 22) {
-                    if showMedia {
-                        LandscapeMediaModule(model: model)
-                    }
-                    if showMedia, showClimate {
-                        Hairline()
-                    }
-                    if showClimate {
-                        ClimateModule(model: model, buttonSize: 64, iconSize: 26, fontSize: 46, labelMinWidth: 110)
-                    }
+                if layout.divider {
+                    Hairline(vertical: true).padding(.vertical, 36)
                 }
-                .padding(.leading, 36)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .modifier(DeckState(live: model.isLive))
+                DeckStack(context: context, slots: placed)
+                    .frame(maxWidth: layout.deckMaxWidth ?? .infinity)
+                    .padding(.leading, layout.deckLeadingPad)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(.horizontal, side)
-        .padding(.top, 16)
-        .padding(.bottom, max(safe.bottom, 16))
+        .padding(layout.insets)
     }
+}
+
+/// Deck slots in order, dimmed and inert while not live.
+private struct DeckStack: View {
+    let context: DashContext
+    let slots: [DeckSlot]
+
+    var body: some View {
+        VStack(spacing: context.layout.gap) {
+            ForEach(slots, id: \.self) { slot in
+                switch slot {
+                case .entries: EntriesPanel(context: context)
+                case .chips: ChipRow(context: context).frame(maxWidth: .infinity, alignment: .leading)
+                case .nav: NavPanel(context: context)
+                case .map: MapPanel(context: context)
+                case .climate: ClimatePanel(context: context)
+                case .media: MediaPanel(context: context)
+                }
+            }
+        }
+        .opacity(context.live ? 1 : 0.28)
+        .allowsHitTesting(context.live && !context.preview)
+        .animation(.easeInOut(duration: 0.2), value: slots)
+    }
+}
+
+/// Entries first when parked, then modules in the user's order.
+@MainActor
+private func orderedSlots(_ context: DashContext) -> [DeckSlot] {
+    let modules = DeckFit.slots(for: context.entries, arrangement: context.layout.arrangement) { module in
+        context.preview || context.hasData(module)
+    }
+    return (context.showsParkPanel ? [.entries] : []) + modules
 }

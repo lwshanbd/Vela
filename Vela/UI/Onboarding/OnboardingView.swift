@@ -9,18 +9,29 @@ struct OnboardingView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let layout = PageLayout(size: proxy.fullScreenSize, safe: proxy.safeAreaInsets, landscape: proxy.size.width > proxy.size.height)
+            let size = proxy.fullScreenSize
+            let safe = proxy.safeAreaInsets
+            let landscape = size.width > size.height
             ZStack {
                 palette.bg.ignoresSafeArea()
                 screen
-                    .frame(maxWidth: layout.landscape ? 520 : .infinity)
-                    .padding(layout.insets)
+                    .frame(maxWidth: landscape ? 520 : .infinity)
+                    .padding(insets(safe: safe, landscape: landscape))
                     .id(stepID)
                     .transition(.asymmetric(insertion: .opacity.combined(with: .offset(x: 24)), removal: .opacity))
             }
             .animation(.easeOut(duration: 0.28), value: stepID)
             .ignoresSafeArea()
         }
+    }
+
+    /// Setup screens keep the original 24 pt sides and 34 pt bottom.
+    private func insets(safe: EdgeInsets, landscape: Bool) -> EdgeInsets {
+        if landscape {
+            let side = max(safe.leading, safe.trailing, 24)
+            return EdgeInsets(top: 16, leading: side, bottom: max(safe.bottom, 16), trailing: side)
+        }
+        return EdgeInsets(top: max(safe.top, 20), leading: 24, bottom: max(safe.bottom, 16), trailing: 24)
     }
 
     private var stepID: String {
@@ -43,7 +54,12 @@ struct OnboardingView: View {
         case .chooseCar: ChooseCarScreen(model: model)
         case let .enterVIN(expected): EnterVINScreen(model: model, expectedLocalName: expected)
         case let .addKey(identity): AddKeyScreen(model: model, identity: identity)
-        case let .confirmInCar(identity): ConfirmInCarScreen(model: model, identity: identity)
+        case let .confirmInCar(identity):
+            if case let .failed(message) = model.pairing.phase {
+                PairFailedScreen(model: model, identity: identity, message: message)
+            } else {
+                ConfirmInCarScreen(model: model, identity: identity)
+            }
         case let .paired(identity): PairedScreen(model: model, identity: identity)
         }
     }
@@ -66,7 +82,7 @@ struct SetupTitle: View {
             if let detail {
                 Text(detail)
                     .font(.system(size: 17))
-                    .lineSpacing(17 * 0.45 - 4)
+                    .lineSpacing(3.5)
                     .foregroundStyle(palette.text2)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -79,7 +95,7 @@ struct SetupBackBar: View {
     let model: AppModel
     var body: some View {
         HStack {
-            CircleNavButton(icon: .chevronLeft, label: "Back") { model.goBack() }
+            CircleNavButton(glyph: .chevronLeft, label: "Back") { model.goBack() }
             Spacer()
         }
         .frame(height: 44)
@@ -97,6 +113,40 @@ struct StatusLine: View {
         }
         .frame(maxWidth: .infinity, minHeight: 56)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// Touchscreen with signal arcs above it, from the Pairing 2 mockup.
+/// `failed` greys the screen and adds the attention badge (Pairing 2b).
+struct CarIllustration: View {
+    var failed = false
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        let palette = palette
+        Canvas { context, canvas in
+            context.translateBy(x: (canvas.width - 180) / 2, y: (canvas.height - 140) / 2)
+            func stroke(_ d: String, _ color: Color) {
+                context.stroke(SVGPath.parse(d), with: .color(color), style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+            }
+            let screen = failed ? palette.text3 : palette.text
+            if !failed {
+                stroke("M72 30a26 26 0 0 1 36 0", palette.text3)
+                stroke("M62 20a40 40 0 0 1 56 0", palette.fill2)
+            }
+            stroke("M49 48h82a9 9 0 0 1 9 9v46a9 9 0 0 1-9 9H49a9 9 0 0 1-9-9V57a9 9 0 0 1 9-9z", screen)
+            stroke("M54 96h28", screen)
+            stroke("M20 126h140", palette.fill2)
+            if failed {
+                context.fill(Path(ellipseIn: CGRect(x: 120, y: 28, width: 32, height: 32)), with: .color(palette.warn))
+                context.stroke(SVGPath.parse("M136 36v9"), with: .color(palette.bg), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                context.fill(Path(ellipseIn: CGRect(x: 134.2, y: 49.7, width: 3.6, height: 3.6)), with: .color(palette.bg))
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 180)
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(palette.panel))
+        .accessibilityHidden(true)
     }
 }
 
@@ -203,31 +253,28 @@ struct ChooseCarScreen: View {
             SetupBackBar(model: model)
             SetupTitle(title: "Choose your car", detail: "Pick the one you're sitting in. The closest car is listed first.")
                 .padding(.top, 28)
-            Hairline().padding(.top, 36)
+            Hairline().padding(.top, 32)
             ScrollView(.vertical) {
                 VStack(spacing: 0) {
                     let cars = model.scanner.vehicles
-                    ForEach(Array(cars.enumerated()), id: \.element.id) { index, car in
+                    ForEach(cars) { car in
                         Button {
                             model.advance(to: .enterVIN(expectedLocalName: car.localName))
                         } label: {
-                            row(car, isFirst: index == 0)
+                            row(car)
                         }
                         .buttonStyle(.plain)
-                        Hairline()
                     }
                     if cars.isEmpty {
                         ScannerStatusLine(scanner: model.scanner)
-                            .frame(height: 80)
-                        Hairline()
+                            .frame(minHeight: 76)
+                            .overlay(alignment: .bottom) { Hairline() }
                     }
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
-            Button {
-                model.advance(to: .enterVIN(expectedLocalName: nil))
-            } label: {
-                Text("My car isn't listed")
+            Button(action: model.searchAgain) {
+                Text("Search again")
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.text)
                     .frame(maxWidth: .infinity, minHeight: 56)
@@ -237,98 +284,144 @@ struct ChooseCarScreen: View {
         }
     }
 
-    private func row(_ car: NearbyTeslaScanner.Advertisement, isFirst: Bool) -> some View {
-        // RSSI buckets, not a distance estimate: BLE signal strength can't
-        // give a trustworthy distance.
-        let (bars, proximity): (Int, String) = switch car.rssi {
-        case (-60)...: (4, "Very close")
+    /// Signal-strength tiers, not a distance: BLE signal strength can't give
+    /// a trustworthy distance.
+    private func row(_ car: NearbyTeslaScanner.Advertisement) -> some View {
+        let (bars, tier): (Int, String) = switch car.rssi {
+        case (-60)...: (4, "Very close · likely the car you are in")
         case -72 ..< -60: (3, "Nearby")
-        case -84 ..< -72: (2, "A little further")
-        default: (1, "Far away")
+        case -84 ..< -72: (2, "A bit farther")
+        default: (1, "Far")
         }
-        let detail = isFirst && bars >= 3 ? "\(proximity) · Likely yours" : proximity
         return HStack(spacing: 16) {
-            SignalBars(level: bars)
+            SignalBars(level: bars, on: palette.text, off: palette.fill2)
             VStack(alignment: .leading, spacing: 3) {
                 Text("Tesla").font(.system(size: 17, weight: .semibold)).foregroundStyle(palette.text)
-                Text(detail).font(.system(size: 15)).foregroundStyle(palette.text2)
+                Text(tier).font(.system(size: 15)).foregroundStyle(palette.text2)
             }
             Spacer()
             Icon(.chevronRight, size: 18).foregroundStyle(palette.text3)
         }
-        .frame(height: 80)
+        .frame(minHeight: 76)
+        .overlay(alignment: .bottom) { Hairline() }
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }
 }
 
-/// The advertisement doesn't carry the VIN, and the car's key pairing is
-/// addressed by VIN, so the user types it once. When they picked a car from
-/// the list, the VIN must hash to that car's advertised name.
+/// The advertisement doesn't carry the VIN and pairing is addressed by VIN,
+/// so the user types it once. When they picked a car from the list, the VIN
+/// must hash to that car's advertised name.
 struct EnterVINScreen: View {
     let model: AppModel
     let expectedLocalName: String?
     @Environment(\.palette) private var palette
     @State private var text = ""
-    @State private var error: String?
     @FocusState private var focused: Bool
 
+    private enum Check {
+        case typing
+        case valid(VehicleIdentity)
+        case format
+        case mismatch
+    }
+
+    private var check: Check {
+        let cleaned = text.uppercased().filter { !$0.isWhitespace }
+        if cleaned.contains(where: { "IOQ".contains($0) }) { return .format }
+        guard cleaned.count >= 17 else { return .typing }
+        guard let vin = VehicleIdentity.normalize(cleaned) else { return .format }
+        let identity = VehicleIdentity(vin: vin)
+        if let expectedLocalName, identity.bleLocalName != expectedLocalName { return .mismatch }
+        return .valid(identity)
+    }
+
     var body: some View {
+        let check = check
+        let (message, bad): (String?, Bool) = switch check {
+        case .typing: (nil, false)
+        case let .valid(identity): (identity.modelName, false)
+        case .format: ("A VIN has 17 letters and numbers and never uses I, O or Q.", true)
+        case .mismatch: ("This VIN belongs to a different car than the one you picked. Check it, or go back and pick another car.", true)
+        }
+        let validIdentity: VehicleIdentity? = if case let .valid(identity) = check { identity } else { nil }
         VStack(spacing: 0) {
             SetupBackBar(model: model)
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 0) {
                     SetupTitle(
-                        title: "Enter your VIN",
-                        detail: "Find it on the touchscreen under Controls › Software, or at the base of the windshield."
+                        title: "Enter the VIN",
+                        detail: "Vela needs the 17-character VIN to set up the key for this car. It stays on this phone."
                     )
                     .padding(.top, 28)
-                    TextField("", text: $text, prompt: Text("17 characters").foregroundStyle(palette.text3))
-                        .font(.system(size: 22, weight: .medium, design: .monospaced))
+                    TrackedLabel(text: "VIN").padding(.top, 32)
+                    TextField("", text: $text)
+                        .font(.system(size: 20, design: .monospaced))
+                        .tracking(1.6)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                         .keyboardType(.asciiCapable)
                         .submitLabel(.continue)
                         .focused($focused)
                         .foregroundStyle(palette.text)
-                        .padding(.horizontal, 18)
-                        .frame(height: 58)
-                        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(palette.fill))
-                        .padding(.top, 32)
-                        .onSubmit(submit)
+                        .padding(.horizontal, 16)
+                        .frame(height: 60)
+                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(palette.bg))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .strokeBorder(bad ? palette.danger : focused || validIdentity != nil ? palette.text : palette.fill2, lineWidth: 2)
+                        )
+                        .padding(.top, 10)
+                        .onSubmit { if let validIdentity { model.advance(to: .addKey(validIdentity)) } }
                         .onChange(of: text) { _, new in
-                            error = nil
-                            let upper = new.uppercased()
+                            let upper = String(new.uppercased().filter { !$0.isWhitespace }.prefix(17))
                             if upper != new { text = upper }
                         }
                         .accessibilityLabel("VIN")
-                    if let error {
-                        Text(error)
+                    HStack(alignment: .top, spacing: 12) {
+                        if let message {
+                            HStack(alignment: .top, spacing: 8) {
+                                Icon(bad ? .errorCircle : .check, size: 18)
+                                    .foregroundStyle(bad ? palette.danger : palette.text)
+                                    .padding(.top, 1)
+                                Text(message)
+                                    .font(.system(size: 15, weight: .medium))
+                                    .foregroundStyle(bad ? palette.danger : palette.text)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        Spacer(minLength: 0)
+                        Text("\(text.count) / 17")
                             .font(.system(size: 15))
-                            .foregroundStyle(palette.warn)
-                            .padding(.top, 12)
+                            .monospacedDigit()
+                            .foregroundStyle(palette.text2)
                     }
+                    .padding(.top, 10)
+
+                    TrackedLabel(text: "WHERE TO FIND IT").padding(.top, 32)
+                    Hairline().padding(.top, 10)
+                    findRow("On the touchscreen: Controls › Software")
+                    findRow("Bottom of the windshield, driver's side")
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
-            PrimaryButton(title: "Continue", enabled: !text.isEmpty, action: submit)
-                .padding(.top, 12)
+            PrimaryButton(title: "Continue", enabled: validIdentity != nil) {
+                if let validIdentity {
+                    focused = false
+                    model.advance(to: .addKey(validIdentity))
+                }
+            }
+            .padding(.top, 12)
         }
         .onAppear { focused = true }
     }
 
-    private func submit() {
-        guard let vin = VehicleIdentity.normalize(text) else {
-            error = "A VIN has 17 letters and numbers, without I, O or Q."
-            return
-        }
-        let identity = VehicleIdentity(vin: vin)
-        if let expectedLocalName, identity.bleLocalName != expectedLocalName {
-            error = "This VIN doesn't match the car you picked. Check it, or go back and pick another car."
-            return
-        }
-        focused = false
-        model.advance(to: .addKey(identity))
+    private func findRow(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 17))
+            .foregroundStyle(palette.text)
+            .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+            .overlay(alignment: .bottom) { Hairline() }
     }
 }
 
@@ -349,14 +442,12 @@ struct AddKeyScreen: View {
                         .padding(.top, 36)
                     SetupTitle(
                         title: "Add Vela as a key",
-                        detail: "Your car adds Vela as a phone key. Vela uses it only to show speed, gear and battery, and to control climate and music."
+                        detail: "Your car adds Vela as a phone key. Vela uses it to show driving and charging info, and for the controls you use in the app."
                     )
                     .padding(.top, 28)
                     Hairline().padding(.top, 32)
                     checkRow("Works without internet")
-                    Hairline()
                     checkRow("Remove it anytime in your car's Locks menu")
-                    Hairline()
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -372,6 +463,7 @@ struct AddKeyScreen: View {
             Spacer(minLength: 0)
         }
         .frame(minHeight: 60)
+        .overlay(alignment: .bottom) { Hairline() }
     }
 }
 
@@ -391,11 +483,7 @@ struct ConfirmInCarScreen: View {
             }
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 0) {
-                    CarIllustration()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 180)
-                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(palette.art))
-                        .padding(.top, 28)
+                    CarIllustration().padding(.top, 28)
                     SetupTitle(title: "Confirm in your car").padding(.top, 32)
                     VStack(alignment: .leading, spacing: 18) {
                         stepRow(1, "Sit in the car with the touchscreen awake.")
@@ -406,29 +494,10 @@ struct ConfirmInCarScreen: View {
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
-            status
+            StatusLine(text: model.pairing.phase == .waitingForApproval ? "Waiting for your car" : "Connecting to your car")
         }
         .onChange(of: model.pairing.phase) { _, phase in
             if phase == .paired { model.pairingSucceeded(identity) }
-        }
-    }
-
-    @ViewBuilder
-    private var status: some View {
-        switch model.pairing.phase {
-        case let .failed(message):
-            VStack(spacing: 12) {
-                Text(message)
-                    .font(.system(size: 15))
-                    .foregroundStyle(palette.warn)
-                    .multilineTextAlignment(.center)
-                PrimaryButton(title: "Try again") { model.pairing.start(identity) }
-            }
-            .padding(.top, 12)
-        case .waitingForApproval:
-            StatusLine(text: "Waiting for your car")
-        case .idle, .findingCar, .paired:
-            StatusLine(text: "Connecting to your car")
         }
     }
 
@@ -448,33 +517,37 @@ struct ConfirmInCarScreen: View {
     }
 }
 
-/// Touchscreen with signal arcs above it, from the Pairing 2 mockup.
-struct CarIllustration: View {
+/// Pairing 2b: the car didn't confirm, or couldn't be reached.
+struct PairFailedScreen: View {
+    let model: AppModel
+    let identity: VehicleIdentity
+    let message: PairingSession.Failure
     @Environment(\.palette) private var palette
 
     var body: some View {
-        Canvas { context, canvas in
-            let origin = CGPoint(x: (canvas.width - 180) / 2, y: (canvas.height - 140) / 2)
-            func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: origin.x + x, y: origin.y + y) }
-            let style = StrokeStyle(lineWidth: 2.5, lineCap: .round)
-
-            var inner = Path()
-            inner.addArc(center: p(90, 48.4), radius: 26, startAngle: .degrees(-135), endAngle: .degrees(-45), clockwise: false)
-            context.stroke(inner, with: .color(palette.text3), style: style)
-            var outer = Path()
-            outer.addArc(center: p(90, 48.3), radius: 40, startAngle: .degrees(-135), endAngle: .degrees(-45), clockwise: false)
-            context.stroke(outer, with: .color(palette.fill2), style: style)
-
-            let screen = Path(roundedRect: CGRect(origin: p(40, 48), size: CGSize(width: 100, height: 64)), cornerRadius: 9)
-            context.stroke(screen, with: .color(palette.text), style: style)
-            var bar = Path()
-            bar.move(to: p(54, 96)); bar.addLine(to: p(82, 96))
-            context.stroke(bar, with: .color(palette.text), style: style)
-            var ground = Path()
-            ground.move(to: p(20, 126)); ground.addLine(to: p(160, 126))
-            context.stroke(ground, with: .color(palette.fill2), style: style)
+        VStack(spacing: 0) {
+            HStack {
+                Button("Cancel") { model.cancelPairing() }
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(palette.text)
+                    .frame(height: 44)
+                Spacer()
+            }
+            ScrollView(.vertical) {
+                VStack(alignment: .leading, spacing: 0) {
+                    CarIllustration(failed: true).padding(.top, 28)
+                    SetupTitle(title: message.title, detail: message.detail).padding(.top, 32)
+                }
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            VStack(spacing: 8) {
+                PrimaryButton(title: "Try again") { model.pairing.start(identity) }
+                Button("Check the VIN") { model.recheckVIN() }
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(palette.text)
+                    .frame(maxWidth: .infinity, minHeight: 52)
+            }
         }
-        .accessibilityHidden(true)
     }
 }
 

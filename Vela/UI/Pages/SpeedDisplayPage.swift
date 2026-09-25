@@ -10,22 +10,19 @@ struct SpeedDisplayPage: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
-        let settings = model.settings
         VStack(spacing: 0) {
-            PageHeader(title: "SPEED DISPLAY", backIcon: .chevronLeft, backLabel: "Back to settings", onBack: onBack)
+            PageHeader(title: "SPEED DISPLAY", backGlyph: .chevronLeft, backLabel: "Back to settings", onBack: onBack)
             if layout.landscape {
                 HStack(spacing: 40) {
-                    preview(height: layout.contentHeight - 44)
-                        .frame(maxWidth: .infinity)
-                    ScrollView(.vertical) { controls(settings) }
+                    preview(height: layout.contentHeight - 44).frame(maxWidth: .infinity)
+                    ScrollView(.vertical) { controls }
                         .scrollBounceBehavior(.basedOnSize)
                         .frame(maxWidth: .infinity)
                 }
             } else {
-                preview(height: min(300, layout.contentHeight * 0.38))
-                    .padding(.top, 12)
+                preview(height: min(300, layout.contentHeight * 0.38)).padding(.top, 12)
                 Hairline()
-                ScrollView(.vertical) { controls(settings) }
+                ScrollView(.vertical) { controls }
                     .scrollBounceBehavior(.basedOnSize)
                 Text("Color applies to speed and gear. Controls stay neutral.")
                     .font(.system(size: 13))
@@ -40,7 +37,7 @@ struct SpeedDisplayPage: View {
     private func preview(height: CGFloat) -> some View {
         let settings = model.settings
         let tint = settings.tint.color(dark: palette.isDark)
-        let weight = settings.numerals == .bold ? palette.speedWeights.bold : palette.speedWeights.regular
+        let weight = settings.numerals == .bold ? palette.speedBold : palette.speedRegular
         let speed = model.isLive ? (model.displaySpeed ?? 0) : 0
         return VStack(spacing: 0) {
             Text(String(speed))
@@ -75,8 +72,9 @@ struct SpeedDisplayPage: View {
         .accessibilityLabel("Preview")
     }
 
-    private func controls(_ settings: AppSettings) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+    private var controls: some View {
+        let settings = model.settings
+        return VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
                 Text("Color").font(.system(size: 17)).foregroundStyle(palette.text)
                 Spacer()
@@ -109,7 +107,7 @@ struct SpeedDisplayPage: View {
             Text("Background").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 18)
             Segmented(
                 options: SpeedGround.allCases.map { ($0, $0.displayName(dark: palette.isDark)) },
-                selection: Binding(get: { settings.ground }, set: { settings.ground = $0 }),
+                selection: settings.ground,
                 accessibilityLabel: "Background",
                 leading: { ground in
                     AnyView(
@@ -119,18 +117,18 @@ struct SpeedDisplayPage: View {
                             .frame(width: 14, height: 14)
                     )
                 }
-            )
-            .padding(.top, 12)
+            ) { settings.ground = $0 }
+                .padding(.top, 12)
 
             Hairline().padding(.top, 22)
             Text("Numerals").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 18)
             Segmented(
                 options: [(SpeedNumerals.regular, "Regular"), (.bold, "Bold")],
-                selection: Binding(get: { settings.numerals }, set: { settings.numerals = $0 }),
+                selection: settings.numerals,
                 accessibilityLabel: "Numerals",
-                labelWeight: { $0 == .bold ? palette.speedWeights.bold : palette.speedWeights.regular }
-            )
-            .padding(.top, 12)
+                labelWeight: { $0 == .bold ? palette.speedBold : palette.speedRegular }
+            ) { settings.numerals = $0 }
+                .padding(.top, 12)
         }
     }
 }

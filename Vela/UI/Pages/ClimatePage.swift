@@ -1,51 +1,63 @@
 import SwiftUI
 
-/// Climate: per-zone setpoints, zone sync, fan readout and power. Fan speed
-/// and fan Auto have no BLE command (`VehicleCapabilities.fanControl`), so the
-/// fan row is a readout only.
+/// Climate: power, per-zone setpoints, seats, wheel, defrost and a fan
+/// readout; parked adds what the car keeps doing when you leave. Fan speed
+/// and fan Auto have no BLE command, so the fan is shown, not controlled.
 struct ClimatePage: View {
     let model: AppModel
     let layout: PageLayout
     @Environment(\.palette) private var palette
 
+    private var climate: ClimateReading? { model.climate }
+
     var body: some View {
-        let isOn = model.climate?.isOn ?? false
-        VStack(spacing: 0) {
-            PageHeader(title: "CLIMATE", speed: (model.displaySpeed, model.unitLabel)) {
-                model.closePage()
+        let isOn = climate?.isOn ?? false
+        PageScaffold(layout: layout) {
+            PageHeader(title: "CLIMATE", onBack: model.closePage) {
+                if model.isInGear { HeaderSpeed(value: model.displaySpeed, unit: model.unitLabel) }
             }
-            if layout.landscape {
-                HStack(alignment: .center, spacing: 40) {
-                    zones
-                        .opacity(isOn ? 1 : 0.32)
+        } content: {
+            VStack(alignment: .leading, spacing: 0) {
+                Segmented(
+                    options: [(false, "Off"), (true, "On")],
+                    selection: climate.map(\.isOn),
+                    accessibilityLabel: "Climate power",
+                    height: 56
+                ) { model.climateAction(.power($0)) }
+                    .padding(.top, 20)
+                if let temps = insideOutside {
+                    Text(temps)
+                        .font(.system(size: 15))
+                        .foregroundStyle(palette.text2)
                         .frame(maxWidth: .infinity)
-                    VStack(spacing: 0) {
-                        VStack(spacing: 20) {
-                            syncRow
-                            fan
-                        }
-                        .opacity(isOn ? 1 : 0.32)
-                        Spacer(minLength: 16)
-                        power
-                    }
-                    .frame(maxWidth: .infinity)
+                        .padding(.top, 14)
                 }
-                .padding(.top, 16)
-            } else {
-                ScrollView(.vertical) {
-                    VStack(spacing: 0) {
-                        zones.padding(.top, layout.contentHeight < 640 ? 24 : 40)
-                        syncRow.padding(.top, 32)
-                        fan.padding(.top, 20)
-                    }
+                zones
                     .opacity(isOn ? 1 : 0.32)
+                    .padding(.top, 24)
+                Hairline().padding(.top, 20)
+                SwitchRow(title: "Sync both sides", isOn: model.settings.syncClimateZones) {
+                    model.setSyncZones(!model.settings.syncClimateZones)
                 }
-                .scrollBounceBehavior(.basedOnSize)
-                power
+                seats
+                wheelAndDefrost
+                fanRow
+                if model.isParked {
+                    whenYouLeave
+                }
             }
         }
-        .padding(layout.insets)
         .animation(.easeInOut(duration: 0.2), value: isOn)
+    }
+
+    private var insideOutside: String? {
+        let inside = model.insideTempLabel, outside = model.outsideTempLabel
+        switch (inside, outside) {
+        case let (i?, o?): return "Inside \(i) · Outside \(o)"
+        case let (i?, nil): return "Inside \(i)"
+        case let (nil, o?): return "Outside \(o)"
+        default: return nil
+        }
     }
 
     private var zones: some View {
@@ -71,97 +83,198 @@ struct ClimatePage: View {
     ) -> some View {
         let label = model.temperatureLabel(celsius)
         let who = title.lowercased()
-        return VStack(spacing: 6) {
+        return VStack(spacing: 4) {
             TrackedLabel(text: title)
             Text(label)
-                .font(.system(size: 72, weight: .regular))
+                .font(.system(size: 64, weight: .regular))
                 .monospacedDigit()
-                .tracking(-0.03 * 72)
+                .tracking(-0.03 * 64)
                 .foregroundStyle(color)
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
-                .frame(height: 72 * 1.05)
+                .frame(height: 64 * 1.05)
                 .accessibilityLabel("\(title.capitalized) \(label)")
             HStack(spacing: 12) {
-                RoundIconButton(.minus, diameter: 64, iconSize: 24, label: "Lower \(who) temperature", action: down)
-                RoundIconButton(.plus, diameter: 64, iconSize: 24, label: "Raise \(who) temperature", action: up)
+                RoundIconButton(.minus, diameter: 64, iconSize: 24, fill: palette.fill, label: "Lower \(who) temperature", action: down)
+                RoundIconButton(.plus, diameter: 64, iconSize: 24, fill: palette.fill, label: "Raise \(who) temperature", action: up)
             }
             .opacity(controlsOpacity)
-            .padding(.top, 12)
+            .padding(.top, 10)
         }
         .frame(maxWidth: .infinity)
     }
 
-    private var syncRow: some View {
-        VStack(spacing: 0) {
-            Hairline()
-            HStack {
-                Text("Sync both sides")
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundStyle(palette.text)
-                Spacer()
-                VelaSwitch(
-                    isOn: Binding(get: { model.settings.syncClimateZones }, set: { model.setSyncZones($0) }),
-                    label: "Sync both sides"
-                )
+    @ViewBuilder
+    private var seats: some View {
+        let front: [(ClimateReading.Seat, String)] = [(.frontLeft, "Driver"), (.frontRight, "Passenger")]
+        let rear: [(ClimateReading.Seat, String)] = [(.rearLeft, "Rear left"), (.rearCenter, "Center"), (.rearRight, "Rear right")]
+        let frontHeat = front.filter { model.seatHeatLevel($0.0) != nil }
+        let rearHeat = rear.filter { model.seatHeatLevel($0.0) != nil }
+        let cool = front.filter { model.seatCoolLevel($0.0) != nil }
+        if !frontHeat.isEmpty || !rearHeat.isEmpty {
+            TrackedLabel(text: "SEAT HEATING").padding(.top, 24)
+            VStack(spacing: 10) {
+                seatGrid(frontHeat, glyph: .heat, dash: 18) { model.seatHeatLevel($0) } tap: { model.cycleSeatHeat($0) }
+                seatGrid(rearHeat, glyph: nil, dash: 14) { model.seatHeatLevel($0) } tap: { model.cycleSeatHeat($0) }
             }
-            .frame(height: 68)
-            Hairline()
+            .padding(.top, 12)
+        }
+        if !cool.isEmpty {
+            TrackedLabel(text: "SEAT COOLING").padding(.top, 24)
+            seatGrid(cool, glyph: .cool, dash: 18) { model.seatCoolLevel($0) } tap: { model.cycleSeatCool($0) }
+                .padding(.top, 12)
         }
     }
 
     @ViewBuilder
-    private var fan: some View {
-        if let level = model.climate?.fanLevel {
-            let bars = 10
-            VStack(spacing: 16) {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text("Fan")
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(palette.text)
-                    Text(level == 0 ? "Off" : String(level))
-                        .font(.system(size: 17))
-                        .foregroundStyle(palette.text2)
-                    Spacer()
+    private func seatGrid(
+        _ seats: [(ClimateReading.Seat, String)], glyph: VelaGlyph?, dash: CGFloat,
+        level: @escaping (ClimateReading.Seat) -> Int?, tap: @escaping (ClimateReading.Seat) -> Void
+    ) -> some View {
+        if !seats.isEmpty {
+            let hot = model.settings.tint.color(dark: palette.isDark)
+            HStack(spacing: 10) {
+                ForEach(seats, id: \.0) { seat, name in
+                    let value = level(seat) ?? 0
+                    Button {
+                        tap(seat)
+                    } label: {
+                        VStack(spacing: 7) {
+                            HStack(spacing: 8) {
+                                if let glyph { Icon(glyph, size: 18) }
+                                Text(name).font(.system(size: 15, weight: .semibold)).lineLimit(1)
+                            }
+                            .foregroundStyle(value > 0 ? palette.text : palette.text2)
+                            HStack(spacing: 5) {
+                                ForEach(1 ... 3, id: \.self) { step in
+                                    Capsule()
+                                        .fill(value >= step ? hot : palette.fill2)
+                                        .frame(width: dash, height: 4)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 72)
+                        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(palette.fill))
+                    }
+                    .buttonStyle(PressStyle())
+                    .accessibilityLabel("\(name) seat")
+                    .accessibilityValue("Level \(value) of 3")
                 }
-                HStack(spacing: 4) {
-                    ForEach(0 ..< bars, id: \.self) { index in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(index < level ? palette.text : palette.fill2)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var wheelAndDefrost: some View {
+        Hairline().padding(.top, 24)
+        if let wheel = climate?.steeringWheelHeat {
+            SwitchRow(title: "Steering wheel heat", isOn: wheel) { model.climateAction(.steeringWheelHeat(!wheel)) }
+        }
+        if let auto = climate?.autoSeatClimate {
+            SwitchRow(title: "Auto seat climate", isOn: auto) { model.climateAction(.autoSeatClimate(!auto)) }
+        }
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Defrost").font(.system(size: 17)).foregroundStyle(palette.text)
+                if let detail = defrostDetail {
+                    Text(detail).font(.system(size: 15)).foregroundStyle(palette.text2)
+                }
+            }
+            Spacer()
+            let max = climate?.maxDefrost ?? false
+            PillButton(title: "Max defrost", selected: max) { model.climateAction(.maxDefrost(!max)) }
+        }
+        .frame(minHeight: 64)
+        .overlay(alignment: .bottom) { Hairline() }
+    }
+
+    private var defrostDetail: String? {
+        func word(_ on: Bool?) -> String? { on.map { $0 ? "on" : "off" } }
+        switch (word(climate?.frontDefroster), word(climate?.rearDefroster)) {
+        case let (f?, r?): return "Front \(f) · Rear \(r)"
+        case let (f?, nil): return "Front \(f)"
+        case let (nil, r?): return "Rear \(r)"
+        default: return nil
+        }
+    }
+
+    @ViewBuilder
+    private var fanRow: some View {
+        if let level = climate?.fanLevel {
+            HStack {
+                Text("Fan").font(.system(size: 17)).foregroundStyle(palette.text)
+                Spacer()
+                HStack(alignment: .bottom, spacing: 3) {
+                    ForEach(0 ..< 10, id: \.self) { index in
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(index < level ? palette.text2 : palette.fill2)
+                            .frame(width: 4, height: CGFloat(6 + index))
                     }
                 }
-                .frame(height: 22)
+                .frame(height: 16, alignment: .bottom)
+                Text(level == 0 ? "Off" : "\(level)")
+                    .font(.system(size: 17))
+                    .foregroundStyle(palette.text2)
+                    .frame(minWidth: 20, alignment: .trailing)
+                    .padding(.leading, 12)
             }
+            .frame(height: 60)
+            .overlay(alignment: .bottom) { Hairline() }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Fan speed \(level == 0 ? "off" : String(level))")
         }
     }
 
-    private var power: some View {
-        let isOn = model.climate?.isOn ?? false
-        return HStack(spacing: 4) {
-            powerOption(title: "Off", selected: !isOn, showsIcon: false) { model.setClimate(on: false) }
-            powerOption(title: "On", selected: isOn, showsIcon: true) { model.setClimate(on: true) }
+    @ViewBuilder
+    private var whenYouLeave: some View {
+        TrackedLabel(text: "WHEN YOU LEAVE THE CAR").padding(.top, 32)
+        if climate?.keeperMode != nil || climate != nil {
+            Text("Keep climate on").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 16)
+            Segmented(
+                options: [(ClimateReading.KeeperMode.off, "Off"), (.on, "On"), (.dog, "Dog"), (.camp, "Camp")],
+                selection: climate?.keeperMode,
+                accessibilityLabel: "Keep climate on"
+            ) { model.climateAction(.keeper($0)) }
+                .padding(.top, 12)
         }
-        .padding(4)
-        .frame(height: 64)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(palette.fill))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Climate power")
+        Text("Cabin overheat protection").font(.system(size: 17)).foregroundStyle(palette.text).padding(.top, 24)
+        Segmented(
+            options: [(ClimateReading.OverheatProtection.off, "Off"), (.on, "On"), (.fanOnly, "Fan only")],
+            selection: climate?.overheatProtection,
+            accessibilityLabel: "Cabin overheat protection"
+        ) { model.climateAction(.overheatProtection($0)) }
+            .padding(.top, 12)
+        HStack {
+            Text("Starts at").font(.system(size: 15)).foregroundStyle(palette.text2)
+            Spacer()
+            HStack(spacing: 6) {
+                ForEach([(ClimateReading.OverheatTemp.low, "Low"), (.medium, "Medium"), (.high, "High")], id: \.0) { level, name in
+                    PillButton(title: name, selected: climate?.overheatTemp == level) {
+                        model.climateAction(.overheatTemp(level))
+                    }
+                }
+            }
+        }
+        .frame(height: 60)
+        .overlay(alignment: .bottom) { Hairline() }
+        if let bio = climate?.bioweaponMode {
+            SwitchRow(title: "Bioweapon defense", isOn: bio) { model.climateAction(.bioweapon(!bio)) }
+        }
+        if let heaters = heaterLine {
+            Text(heaters)
+                .font(.system(size: 13))
+                .lineSpacing(3)
+                .foregroundStyle(palette.text2)
+                .padding(.top, 16)
+        }
     }
 
-    private func powerOption(title: String, selected: Bool, showsIcon: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if showsIcon { Icon(.power, size: 18) }
-                Text(title).font(.system(size: 17, weight: .semibold))
-            }
-            .foregroundStyle(selected ? palette.bg : palette.text2)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(selected ? palette.text : .clear))
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(PressStyle())
-        .accessibilityAddTraits(selected ? [.isSelected] : [])
+    private var heaterLine: String? {
+        var parts: [String] = []
+        if let on = climate?.batteryHeater { parts.append("Battery heater \(on ? "on" : "off")") }
+        if let on = climate?.wiperHeater { parts.append("Wiper heater \(on ? "on" : "off")") }
+        if let on = climate?.mirrorHeaters { parts.append("Mirror heaters \(on ? "on" : "off")") }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 }

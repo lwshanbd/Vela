@@ -7,15 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0242D4A6519F9108A97C89ED /* VehiclePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF0FBA594A1ED40A4B2A70D /* VehiclePage.swift */; };
+		14F8C97D5AE834004135DBA4 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA7FC37439C5202F1081295 /* NetworkMonitor.swift */; };
 		1BFCB4677EC694D67CA4CB8C /* PairingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB258B73E2DD658C025954B5 /* PairingSession.swift */; };
 		2175EC6D56D5948B46326417 /* VehicleIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */; };
+		40C5768F20CF6229E291CB83 /* ChargersPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B6BB10049D4943C275EDED /* ChargersPage.swift */; };
 		455D1646A51CE26711067292 /* ClimatePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0A08CA58321A3142A79D46 /* ClimatePage.swift */; };
 		5370500FBBBBF6F5B6A08FFA /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9923C8F1F378EC06689ABC /* Palette.swift */; };
+		55F30F09F74F2D8E114A3CAC /* DashboardSettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE915EFF4F63B48E1D9FFFF /* DashboardSettingsPage.swift */; };
 		5BB9F41FDE29DB574E4BB4DF /* Instrument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08201897872296503AF30759 /* Instrument.swift */; };
 		5EBC49F180770FA865B99377 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1983846979F11C4ABE92845F /* AppModel.swift */; };
+		6A9DCA1AAF6E1265B3F8CCA1 /* DashboardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8991808EEF023354CB2D8DDD /* DashboardLayout.swift */; };
 		6BE642BFF9CD292A9BF81C6B /* DeckModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F012C21A8C7FDA7CF0958B /* DeckModules.swift */; };
 		72CB8F92DDA7BD6155071AD1 /* VelaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789862BF13686674B5EB72A3 /* VelaApp.swift */; };
 		7F41A66194EA27D01FA3B303 /* PreviewFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */; };
+		8167693213FD81C0313A8B60 /* SVGPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6822AA700B8B0971ACC4C4DF /* SVGPath.swift */; };
+		8445B24443D50CE50706D6CF /* DashboardConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720984EABFCBD304F685468 /* DashboardConfig.swift */; };
 		8C2779EF504A0DF827C8A188 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889789B4CB0B1416E0F56C64 /* AppSettings.swift */; };
 		9794F737CE3CD7BE3C8DD094 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2DBFF7399388653ADB7FDF /* DashboardView.swift */; };
 		9B5F8672A8268DE413203742 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C19C1E68CFF33E627BF0E87 /* Controls.swift */; };
@@ -25,7 +32,9 @@
 		ADDED676EA35C7FCCE8C8906 /* VehicleConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D905DC0B858847274F4ED1F /* VehicleConnection.swift */; };
 		B4408C666102010EA033EF6C /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75DC15B7E8836F9EB4120D /* OnboardingView.swift */; };
 		B5256DA5DCE4B4DE4D605B2F /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A3D3271BEED9CB5B0AAFF0 /* Icons.swift */; };
+		C1993985A61D02C29063F752 /* ControlsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4FBB0D191E012F8E8E9915 /* ControlsPage.swift */; };
 		D50991309936D0336F8A92AC /* VehicleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C257AC3A614B7868B240C2 /* VehicleState.swift */; };
+		E0D1CD34A3D8A7CCA61E4F6A /* ChargingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF78D88920B6AA10B1268F12 /* ChargingPage.swift */; };
 		E705426B6AF7E89E832198B9 /* SpeedDisplayPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136DF1A0B637A65231CDAF8B /* SpeedDisplayPage.swift */; };
 		E8AEDC43091FE5D4FBAEDCFE /* MusicPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9990F0C9D7C415D7C7575A /* MusicPage.swift */; };
 		EF22D988389224DBB8937340 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06C3337ACED2B2DC57D7FF2B /* Assets.xcassets */; };
@@ -35,22 +44,31 @@
 /* Begin PBXFileReference section */
 		06C3337ACED2B2DC57D7FF2B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08201897872296503AF30759 /* Instrument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instrument.swift; sourceTree = "<group>"; };
+		0F4FBB0D191E012F8E8E9915 /* ControlsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsPage.swift; sourceTree = "<group>"; };
 		0F8E79671B9DE60AC7E48ACD /* NearbyTeslaScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyTeslaScanner.swift; sourceTree = "<group>"; };
 		136DF1A0B637A65231CDAF8B /* SpeedDisplayPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedDisplayPage.swift; sourceTree = "<group>"; };
+		14B6BB10049D4943C275EDED /* ChargersPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargersPage.swift; sourceTree = "<group>"; };
+		1720984EABFCBD304F685468 /* DashboardConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardConfig.swift; sourceTree = "<group>"; };
 		1983846979F11C4ABE92845F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		20C257AC3A614B7868B240C2 /* VehicleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleState.swift; sourceTree = "<group>"; };
 		25CD44BF7C4394366DD16C0C /* PageContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContainer.swift; sourceTree = "<group>"; };
 		27F012C21A8C7FDA7CF0958B /* DeckModules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckModules.swift; sourceTree = "<group>"; };
 		3D905DC0B858847274F4ED1F /* VehicleConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleConnection.swift; sourceTree = "<group>"; };
+		3DA7FC37439C5202F1081295 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		4D9923C8F1F378EC06689ABC /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		59C5D23F1E3C541CF439620F /* PreviewFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFixtures.swift; sourceTree = "<group>"; };
 		5C19C1E68CFF33E627BF0E87 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		6822AA700B8B0971ACC4C4DF /* SVGPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGPath.swift; sourceTree = "<group>"; };
+		6EE915EFF4F63B48E1D9FFFF /* DashboardSettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettingsPage.swift; sourceTree = "<group>"; };
 		789862BF13686674B5EB72A3 /* VelaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VelaApp.swift; sourceTree = "<group>"; };
 		7F0A08CA58321A3142A79D46 /* ClimatePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClimatePage.swift; sourceTree = "<group>"; };
 		804F546CDD75AA9E1EE8A75D /* VehicleIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleIdentity.swift; sourceTree = "<group>"; };
 		889789B4CB0B1416E0F56C64 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		8991808EEF023354CB2D8DDD /* DashboardLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardLayout.swift; sourceTree = "<group>"; };
 		AA75DC15B7E8836F9EB4120D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		B12083155D90CF05C1A08657 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
+		BDF0FBA594A1ED40A4B2A70D /* VehiclePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehiclePage.swift; sourceTree = "<group>"; };
+		CF78D88920B6AA10B1268F12 /* ChargingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingPage.swift; sourceTree = "<group>"; };
 		DB258B73E2DD658C025954B5 /* PairingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingSession.swift; sourceTree = "<group>"; };
 		DB48061975AD87F58267ABB3 /* Vela.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Vela.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3A3D3271BEED9CB5B0AAFF0 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
@@ -94,11 +112,16 @@
 		7E6E74E4A2E2B804EB939B59 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				14B6BB10049D4943C275EDED /* ChargersPage.swift */,
+				CF78D88920B6AA10B1268F12 /* ChargingPage.swift */,
 				7F0A08CA58321A3142A79D46 /* ClimatePage.swift */,
+				0F4FBB0D191E012F8E8E9915 /* ControlsPage.swift */,
+				6EE915EFF4F63B48E1D9FFFF /* DashboardSettingsPage.swift */,
 				FC9990F0C9D7C415D7C7575A /* MusicPage.swift */,
 				25CD44BF7C4394366DD16C0C /* PageContainer.swift */,
 				B12083155D90CF05C1A08657 /* SettingsPage.swift */,
 				136DF1A0B637A65231CDAF8B /* SpeedDisplayPage.swift */,
+				BDF0FBA594A1ED40A4B2A70D /* VehiclePage.swift */,
 			);
 			path = Pages;
 			sourceTree = "<group>";
@@ -108,6 +131,7 @@
 			children = (
 				5C19C1E68CFF33E627BF0E87 /* Controls.swift */,
 				F3A3D3271BEED9CB5B0AAFF0 /* Icons.swift */,
+				6822AA700B8B0971ACC4C4DF /* SVGPath.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -135,6 +159,7 @@
 		998B5831E71F461AD4ADAAE4 /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				8991808EEF023354CB2D8DDD /* DashboardLayout.swift */,
 				FC2DBFF7399388653ADB7FDF /* DashboardView.swift */,
 				27F012C21A8C7FDA7CF0958B /* DeckModules.swift */,
 				08201897872296503AF30759 /* Instrument.swift */,
@@ -155,6 +180,8 @@
 			children = (
 				1983846979F11C4ABE92845F /* AppModel.swift */,
 				889789B4CB0B1416E0F56C64 /* AppSettings.swift */,
+				1720984EABFCBD304F685468 /* DashboardConfig.swift */,
+				3DA7FC37439C5202F1081295 /* NetworkMonitor.swift */,
 				20C257AC3A614B7868B240C2 /* VehicleState.swift */,
 			);
 			path = State;
@@ -281,23 +308,32 @@
 			files = (
 				5EBC49F180770FA865B99377 /* AppModel.swift in Sources */,
 				8C2779EF504A0DF827C8A188 /* AppSettings.swift in Sources */,
+				40C5768F20CF6229E291CB83 /* ChargersPage.swift in Sources */,
+				E0D1CD34A3D8A7CCA61E4F6A /* ChargingPage.swift in Sources */,
 				455D1646A51CE26711067292 /* ClimatePage.swift in Sources */,
 				9B5F8672A8268DE413203742 /* Controls.swift in Sources */,
+				C1993985A61D02C29063F752 /* ControlsPage.swift in Sources */,
+				8445B24443D50CE50706D6CF /* DashboardConfig.swift in Sources */,
+				6A9DCA1AAF6E1265B3F8CCA1 /* DashboardLayout.swift in Sources */,
+				55F30F09F74F2D8E114A3CAC /* DashboardSettingsPage.swift in Sources */,
 				9794F737CE3CD7BE3C8DD094 /* DashboardView.swift in Sources */,
 				6BE642BFF9CD292A9BF81C6B /* DeckModules.swift in Sources */,
 				B5256DA5DCE4B4DE4D605B2F /* Icons.swift in Sources */,
 				5BB9F41FDE29DB574E4BB4DF /* Instrument.swift in Sources */,
 				E8AEDC43091FE5D4FBAEDCFE /* MusicPage.swift in Sources */,
 				A49DC436EBEFAE62ADE78CF3 /* NearbyTeslaScanner.swift in Sources */,
+				14F8C97D5AE834004135DBA4 /* NetworkMonitor.swift in Sources */,
 				B4408C666102010EA033EF6C /* OnboardingView.swift in Sources */,
 				FC3A5D2DD482FEB7857F4573 /* PageContainer.swift in Sources */,
 				1BFCB4677EC694D67CA4CB8C /* PairingSession.swift in Sources */,
 				5370500FBBBBF6F5B6A08FFA /* Palette.swift in Sources */,
 				7F41A66194EA27D01FA3B303 /* PreviewFixtures.swift in Sources */,
+				8167693213FD81C0313A8B60 /* SVGPath.swift in Sources */,
 				A7298AEC6ED1A1B1D29DF9F1 /* SettingsPage.swift in Sources */,
 				E705426B6AF7E89E832198B9 /* SpeedDisplayPage.swift in Sources */,
 				ADDED676EA35C7FCCE8C8906 /* VehicleConnection.swift in Sources */,
 				2175EC6D56D5948B46326417 /* VehicleIdentity.swift in Sources */,
+				0242D4A6519F9108A97C89ED /* VehiclePage.swift in Sources */,
 				D50991309936D0336F8A92AC /* VehicleState.swift in Sources */,
 				72CB8F92DDA7BD6155071AD1 /* VelaApp.swift in Sources */,
 			);
@@ -516,7 +552,7 @@
 			repositoryURL = "https://github.com/lwshanbd/swift-tesla-ble";
 			requirement = {
 				kind = revision;
-				revision = d07fcac24064252f0a8f19e7484431f4a8975275;
+				revision = 6f1fefa2f5c293fdabc7f1ac494bdc09f346b642;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

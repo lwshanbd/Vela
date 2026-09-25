@@ -11,15 +11,17 @@ struct PageContainer: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let safe = proxy.safeAreaInsets
             let size = proxy.fullScreenSize
-            let landscape = size.width > size.height
-            let layout = PageLayout(size: size, safe: safe, landscape: landscape)
+            let layout = PageLayout(size: size, safe: proxy.safeAreaInsets)
             Group {
                 switch page {
                 case .music: MusicPage(model: model, layout: layout)
                 case .climate: ClimatePage(model: model, layout: layout)
                 case .settings: SettingsPage(model: model, layout: layout)
+                case .controls: ControlsPage(model: model, layout: layout)
+                case .chargers: ChargersPage(model: model, layout: layout)
+                case .vehicle: VehiclePage(model: model, layout: layout)
+                case .charging: ChargingPage(model: model, layout: layout)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -30,15 +32,15 @@ struct PageContainer: View {
                 DragGesture(minimumDistance: 20)
                     .onChanged { value in
                         model.notePageInteraction()
-                        // Only vertical drags from the upper part move the sheet,
-                        // so sliders and lists below keep their own gestures.
-                        guard value.startLocation.y < size.height * 0.45,
+                        // Only vertical drags starting near the top move the
+                        // sheet, so sliders and lists keep their own gestures.
+                        guard value.startLocation.y < min(160, size.height * 0.2),
                               abs(value.translation.height) > abs(value.translation.width)
                         else { return }
                         dragOffset = max(0, value.translation.height)
                     }
                     .onEnded { value in
-                        if dragOffset > 120 || value.predictedEndTranslation.height > 320, dragOffset > 0 {
+                        if dragOffset > 120 || (dragOffset > 0 && value.predictedEndTranslation.height > 320) {
                             model.closePage()
                         }
                         withAnimation(.easeOut(duration: 0.2)) { dragOffset = 0 }
@@ -49,19 +51,20 @@ struct PageContainer: View {
     }
 }
 
-/// Insets shared by every page: 24 pt sides and the safe area in portrait,
-/// symmetric island-side insets in landscape.
+/// Insets shared by every page: 28 pt sides in portrait, symmetric
+/// island-side insets in landscape.
 struct PageLayout {
     let size: CGSize
     let safe: EdgeInsets
-    let landscape: Bool
+
+    var landscape: Bool { size.width > size.height }
 
     var insets: EdgeInsets {
         if landscape {
-            let side = max(safe.leading, safe.trailing, 24)
-            return EdgeInsets(top: 16, leading: side, bottom: max(safe.bottom, 16), trailing: side)
+            let side = max(safe.leading, safe.trailing, 28)
+            return EdgeInsets(top: 28, leading: side, bottom: max(safe.bottom + 10, 28), trailing: side)
         }
-        return EdgeInsets(top: max(safe.top, 20), leading: 24, bottom: max(safe.bottom, 16), trailing: 24)
+        return EdgeInsets(top: max(safe.top, 20), leading: 28, bottom: max(safe.bottom + 10, 20), trailing: 28)
     }
 
     var contentWidth: CGFloat { size.width - insets.leading - insets.trailing }
@@ -76,5 +79,28 @@ extension GeometryProxy {
             width: size.width + safeAreaInsets.leading + safeAreaInsets.trailing,
             height: size.height + safeAreaInsets.top + safeAreaInsets.bottom
         )
+    }
+}
+
+/// Scrollable page body with the header pinned above it.
+struct PageScaffold<Header: View, Content: View>: View {
+    let layout: PageLayout
+    var maxWidth: CGFloat = 560
+    @ViewBuilder var header: () -> Header
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header()
+            ScrollView(.vertical) {
+                content()
+                    .frame(maxWidth: maxWidth)
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 12)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
+        }
+        .padding(layout.insets)
     }
 }

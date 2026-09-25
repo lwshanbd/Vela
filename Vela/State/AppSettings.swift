@@ -41,6 +41,11 @@ enum SpeedNumerals: String, CaseIterable, Sendable {
     case bold
 }
 
+enum PressureUnit: String, CaseIterable, Sendable {
+    case bar
+    case psi
+}
+
 /// User preferences, persisted in `UserDefaults`.
 @MainActor
 @Observable
@@ -54,9 +59,15 @@ final class AppSettings {
     /// Climate page "Sync both sides". An app-side behavior: while on, a
     /// driver change is sent to both zones.
     var syncClimateZones: Bool { didSet { save(syncClimateZones, .syncClimateZones) } }
+    var pressureUnit: PressureUnit { didSet { save(pressureUnit.rawValue, .pressureUnit) } }
+    var dashboard: DashboardConfig {
+        didSet {
+            if let data = try? JSONEncoder().encode(dashboard) { save(data, .dashboard) }
+        }
+    }
 
     private enum Key: String {
-        case units, appearance, tint, ground, numerals, keepScreenOn, syncClimateZones
+        case units, appearance, tint, ground, numerals, keepScreenOn, syncClimateZones, pressureUnit, dashboard
         var name: String { "vela.settings.\(rawValue)" }
     }
 
@@ -75,6 +86,9 @@ final class AppSettings {
         numerals = read(.numerals, SpeedNumerals.regular)
         keepScreenOn = defaults.object(forKey: Key.keepScreenOn.name) as? Bool ?? true
         syncClimateZones = defaults.object(forKey: Key.syncClimateZones.name) as? Bool ?? true
+        pressureUnit = read(.pressureUnit, Locale.current.measurementSystem == .us ? PressureUnit.psi : .bar)
+        dashboard = defaults.data(forKey: Key.dashboard.name)
+            .flatMap { try? JSONDecoder().decode(DashboardConfig.self, from: $0) } ?? .default
     }
 
     private func save(_ value: Any, _ key: Key) {
