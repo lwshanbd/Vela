@@ -61,8 +61,8 @@ final class VehicleConnection {
     private let keyStore: KeychainTeslaKeyStore
     private var client: TeslaVehicleClient?
     private var supervisor: Task<Void, Never>?
-    private let bleLogger = OSLogTeslaBLELogger(subsystem: "com.beadinventory.vela")
-    private let log = Logger(subsystem: "com.beadinventory.vela", category: "connection")
+    private let bleLogger = OSLogTeslaBLELogger(subsystem: "com.baodi.vela")
+    private let log = Logger(subsystem: "com.baodi.vela", category: "connection")
 
     /// Speed display refresh is capped at 4 Hz (design: "digits never
     /// flicker"). The car usually takes longer than this to answer, so in

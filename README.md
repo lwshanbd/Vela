@@ -14,7 +14,7 @@ xcodegen generate
 
 - 最低系统 iOS 17，仅 iPhone
 - Swift 6，strict concurrency
-- 签名沿用 BeadInventory：Team `S4BS47942Q`，自动签名，Bundle ID `com.beadinventory.vela`
+- Team `S4BS47942Q`，自动签名，Bundle ID `com.baodi.vela`
 - 依赖我们 fork 的 [swift-tesla-ble](https://github.com/lwshanbd/swift-tesla-ble)，SPM 锁定在 `d07fcac`。原库在 [shoujiaxin/swift-tesla-ble](https://github.com/shoujiaxin/swift-tesla-ble)。fork 补上了原库丢掉的字段：GPS 位置和朝向、播放状态、更多的充电、空调、车身和软件更新状态。车没上报的字段一律是 nil，不会变成 0。
 
 ## 结构

@@ -37,8 +37,8 @@ final class PairingSession {
     private(set) var phase: Phase = .idle
     private let store: VehicleIdentityStore
     private var task: Task<Void, Never>?
-    private let bleLogger = OSLogTeslaBLELogger(subsystem: "com.beadinventory.vela")
-    private let log = Logger(subsystem: "com.beadinventory.vela", category: "pairing")
+    private let bleLogger = OSLogTeslaBLELogger(subsystem: "com.baodi.vela")
+    private let log = Logger(subsystem: "com.baodi.vela", category: "pairing")
 
     /// How long to wait for the owner to approve on the touchscreen.
     private static let approvalWindow: Duration = .seconds(180)

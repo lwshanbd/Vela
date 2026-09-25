@@ -46,7 +46,7 @@ struct VehicleIdentity: Equatable, Sendable {
 
 /// Persists which vehicle is paired and owns its Keychain key.
 struct VehicleIdentityStore: Sendable {
-    static let keychainService = "com.beadinventory.vela.tesla-key"
+    static let keychainService = "com.baodi.vela.tesla-key"
     private static let vinKey = "vela.pairedVIN"
 
     let keyStore = KeychainTeslaKeyStore(service: keychainService)
