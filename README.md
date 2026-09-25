@@ -1,43 +1,34 @@
 # Vela
 
-把 iPhone 变成 Tesla 的副屏。
+Vela 让 iPhone 当 Tesla 的副屏用。
 
-手机放在车里的支架上，通过蓝牙直接连车，显示车速、档位、电量，也能控制空调和音乐。不走网络，不需要登录 Tesla 账号。
+手机放在车里的支架上，用蓝牙直接连车。车速、档位、电量一眼就能看到，空调和音乐也能在手机上调。不用联网，也不用登录 Tesla 账号。
 
-## 功能
+## 能做什么
 
-- 仪表盘：车速、档位、功率、续航、电量。行驶和停车各有一套布局。
-- 可选模块：车内外温度、朝向、导航、地图、空调、媒体。竖屏和横屏分别设置顺序和开关。
-- 空调：温度、座椅加热和通风、方向盘加热、除雾、保持空调模式、过热保护、生化防御。
-- 车辆控制：锁车、前后备箱、车窗、天窗、哨兵、充电口。
-- 状态查看：车门车窗、胎压、充电、软件更新。
-- 附近超充站。
-- 车睡着时会提示，开车门之后自动连上。
+- 看车速、档位、功率、电量和续航。停车以后会多显示车门、车窗和胎压。
+- 调空调温度、座椅加热和通风、方向盘加热、除雾。
+- 播放暂停、切歌、调音量。
+- 锁车，开后备箱、车窗、天窗和充电口，开关哨兵模式。
+- 查附近的超充站。
+- 仪表盘上放哪些内容可以自己选，竖屏和横屏分开设置。
 
-## 要求
+## 使用条件
 
-- iPhone，iOS 17 或更高
-- 支持蓝牙钥匙的 Tesla
-- 第一次使用要在车上确认，把手机加为钥匙
+你需要一台 iOS 17 以上的 iPhone，和一辆能用手机钥匙的 Tesla。第一次连车时，要在车里的屏幕上点一下确认，把这台手机加成钥匙。
 
-## 构建
+## 从源码构建
 
-工程文件由 [XcodeGen](https://github.com/yonaskolb/XcodeGen) 生成。
+工程文件用 [XcodeGen](https://github.com/yonaskolb/XcodeGen) 生成：
 
 ```bash
 brew install xcodegen
-```
-
-```bash
 xcodegen generate
-```
-
-```bash
 open Vela.xcodeproj
 ```
 
-在 Xcode 里把 Signing 的 Team 换成你自己的，Bundle ID 也改成你自己的，然后装到手机上。
+打开以后，在 Signing 里把 Team 和 Bundle ID 换成你自己的，就能装到手机上。
 
-## 致谢
+## 感谢
 
-蓝牙通信用的是 [swift-tesla-ble](https://github.com/shoujiaxin/swift-tesla-ble)。本项目依赖的是一个 [fork](https://github.com/lwshanbd/swift-tesla-ble)，补上了位置、媒体播放状态等原库没有解析的字段。
+蓝牙部分基于 [shoujiaxin/swift-tesla-ble](https://github.com/shoujiaxin/swift-tesla-ble)。项目用的是[我 fork 的版本](https://github.com/lwshanbd/swift-tesla-ble)，多读了位置、播放状态这些字段。
